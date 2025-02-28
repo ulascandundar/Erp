@@ -22,11 +22,13 @@ public class UserService : IUserService
 	private readonly ErpDbContext _db;
 	private readonly IPasswordHasher<User> _passwordHasher;
 	private readonly IMapper _mapper;
-	public UserService(ErpDbContext db, IPasswordHasher<User> passwordHasher, IMapper mapper)
+	private readonly ICurrentUserService _currentUserService;
+	public UserService(ErpDbContext db, IPasswordHasher<User> passwordHasher, IMapper mapper, ICurrentUserService currentUserService)
 	{
 		_db = db;
 		_passwordHasher = passwordHasher;
 		_mapper = mapper;
+		_currentUserService = currentUserService;
 	}
 
 	public async Task<UserDto> CreateUserAsync(UserCreateDto userCreateDto)
@@ -102,6 +104,21 @@ public class UserService : IUserService
 	public async Task<UserDto> ChangePasswordUserAsync(ChangePasswordUserDto changePasswordUserDto, Guid userId)
 	{
 		var userEntity = await _db.Users.FirstOrDefaultAsync(x => x.Id == userId);
+		if (userEntity == null)
+		{
+			throw new UserEmailAlreadyExistsException();
+		}
+		userEntity.PasswordHash = _passwordHasher.HashPassword(userEntity, changePasswordUserDto.Password);
+		_db.Users.Update(userEntity);
+		await _db.SaveChangesAsync();
+		var dto = _mapper.Map<UserDto>(userEntity);
+		return dto;
+	}
+
+	public async Task<UserDto> ChangeCurrentUserPasswordAsync(ChangePasswordUserDto changePasswordUserDto)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var userEntity = await _db.Users.FirstOrDefaultAsync(x => x.Id == currentUser.Id);
 		if (userEntity == null)
 		{
 			throw new UserEmailAlreadyExistsException();
