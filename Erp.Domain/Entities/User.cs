@@ -11,4 +11,6 @@ public class User : BaseEntity
 	public string Email { get; set; }
 	public string PasswordHash { get; set; }
 	public List<string> Roles { get; set; }
+	public string ForgotPasswordOtp { get; set; }
+	public DateTime? ForgotPasswordOtpExpireDate { get; set; }
 }
