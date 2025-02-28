@@ -2,8 +2,10 @@
 using Erp.Domain.DTOs.Auth;
 using Erp.Domain.Entities;
 using Erp.Domain.Interfaces.BusinessServices;
+using Erp.Domain.Models;
 using Erp.Domain.Utils;
 using Erp.Infrastructure.Data;
+using Erp.Notifications.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,12 +20,13 @@ public class ForgotPasswordService : IForgotPasswordService
 {
 	private readonly ErpDbContext _db;
 	private readonly IPasswordHasher<User> _passwordHasher;
+	private readonly NotificationSender _notificationSender;
 
-
-	public ForgotPasswordService(ErpDbContext db, IPasswordHasher<User> passwordHasher)
+	public ForgotPasswordService(ErpDbContext db, IPasswordHasher<User> passwordHasher, NotificationSender notificationSender)
 	{
 		_db = db;
 		_passwordHasher = passwordHasher;
+		_notificationSender = notificationSender;
 	}
 
 
@@ -42,7 +45,14 @@ public class ForgotPasswordService : IForgotPasswordService
 		// Save the new password
 		await _db.SaveChangesAsync();
 		// Send the new password to the user
-		// SendEmail(user.Email, newPassword);
+		NotificationMessage notificationMessage = new NotificationMessage
+		{
+			Recipient = user.Email,
+			Subject = "Şifre Sıfırlama",
+			Content = $"Şifrenizi sıfırlamak için aşağıdaki kodu kullanabilirsiniz: {otp}",
+			Type = Domain.Enums.NotificationTypes.Email
+		};
+		await _notificationSender.StartAsync(notificationMessage);
 		return otp;
 	}
 

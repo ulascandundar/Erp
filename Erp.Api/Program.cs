@@ -2,11 +2,11 @@ using Erp.Infrastructure.Configurations;
 using Erp.Infrastructure.Services;
 using Erp.Application.Configurations;
 using Asp.Versioning;
-using Erp.Api.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Erp.Domain.Models;
 using Erp.Application.Services.UserServices;
 using Erp.Domain.Interfaces.BusinessServices;
+using Erp.Notifications.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +39,7 @@ builder.Services.RegisterFluentValidation();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCaching();
 builder.Services.AddCachedService<IUserService, UserService>();
+builder.Services.RegisterNotificationFactory();
 builder.Services
 	.AddApiVersioning(option =>
 	{

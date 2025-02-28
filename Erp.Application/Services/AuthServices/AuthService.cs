@@ -5,6 +5,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Domain.Interfaces.Jwt;
 using Erp.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ public class AuthService : IAuthService
 
 	public async Task<TokenDto> LoginAsync(UserLoginDto userLoginDto)
 	{
-		var user = _db.Users.FirstOrDefault(x => x.Email == userLoginDto.Email);
+		var user = await _db.Users.FirstOrDefaultAsync(x => x.Email == userLoginDto.Email);
 		if (user == null)
 		{
 			throw new UserAuthException("Email yada şifre yanlış");
