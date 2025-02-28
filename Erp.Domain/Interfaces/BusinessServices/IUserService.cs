@@ -19,4 +19,6 @@ public interface IUserService
 	Task SoftDeleteUserAsync(Guid id);
 
 	Task<UserDto> CreateUserAsync(UserCreateDto userCreateDto);
+	Task<UserDto> UpdateUserAsync(UserUpdateDto userUpdateDto, Guid userId);
+	Task<UserDto> ChangePasswordUserAsync(ChangePasswordUserDto changePasswordUserDto, Guid userId);
 }
