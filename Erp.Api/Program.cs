@@ -36,6 +36,7 @@ builder.Services.RegisterDatabase(builder.Configuration);
 builder.Services.RegisterAutoMapper();
 builder.Services.RegisterServices();
 builder.Services.RegisterFluentValidation();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCaching();
 builder.Services.AddCachedService<IUserService, UserService>();
 builder.Services

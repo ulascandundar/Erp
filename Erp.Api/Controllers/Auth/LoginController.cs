@@ -1,6 +1,5 @@
 ﻿using Erp.Api.Controllers.Abstracts;
 using Erp.Domain.DTOs.Auth;
-using Erp.Domain.Interfaces;
 using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Mvc;
 

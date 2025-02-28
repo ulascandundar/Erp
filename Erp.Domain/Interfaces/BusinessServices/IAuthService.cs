@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Erp.Domain.Interfaces;
+namespace Erp.Domain.Interfaces.BusinessServices;
 
 public interface IAuthService
 {

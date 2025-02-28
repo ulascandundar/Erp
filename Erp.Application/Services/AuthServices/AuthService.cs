@@ -1,7 +1,7 @@
 ﻿using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Auth;
 using Erp.Domain.Entities;
-using Erp.Domain.Interfaces;
+using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Domain.Interfaces.Jwt;
 using Erp.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
