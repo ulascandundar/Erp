@@ -14,6 +14,9 @@ using Erp.Domain.CustomExceptions;
 using Erp.Infrastructure.Attributes.Caching;
 using Erp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+using Erp.Domain.DTOs.Pagination;
+using Erp.Application.Common.Extensions;
 
 namespace Erp.Application.Services.UserServices;
 
@@ -55,7 +58,7 @@ public class UserService : IUserService
 
 	public async Task<UserDto> GetUserByIdAsync(Guid id)
 	{
-		var user = _db.Users.FirstOrDefault(x => x.Id == id);
+		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
 		if (user == null)
 		{
 			throw new NullValueException("Kullanıcı bulunamadı");
@@ -77,7 +80,7 @@ public class UserService : IUserService
 
 	public async Task SoftDeleteUserAsync(Guid id)
 	{
-		var user = _db.Users.FirstOrDefault(x => x.Id == id);
+		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
 		if (user == null)
 		{
 			throw new NullValueException("Kullanıcı bulunamadı");
@@ -128,5 +131,25 @@ public class UserService : IUserService
 		await _db.SaveChangesAsync();
 		var dto = _mapper.Map<UserDto>(userEntity);
 		return dto;
+	}
+
+	public async Task<CustomPagedResult<UserDto>> GedPagedAsync(PaginationRequest paginationRequest)
+	{
+		var query = _db.Users.Where(x => x.IsDeleted == false).AsQueryable();
+		if (!string.IsNullOrEmpty(paginationRequest.Search))
+		{
+			query = query.Where(x => x.Email.Contains(paginationRequest.Search));
+		}
+		var entityResult = await query.ToPagedResultAsync(paginationRequest);
+		var dtos = _mapper.Map<List<UserDto>>(entityResult.Items);
+		var result = new CustomPagedResult<UserDto>
+		{
+			Items = dtos,
+			TotalCount = entityResult.TotalCount,
+			TotalPages = entityResult.TotalPages,
+			PageNumber = entityResult.PageNumber,
+			PageSize = entityResult.PageSize
+		};
+		return result;
 	}
 }

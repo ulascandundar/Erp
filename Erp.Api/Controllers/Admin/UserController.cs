@@ -1,4 +1,5 @@
 ﻿using Erp.Api.Controllers.Abstracts;
+using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.User;
 using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.BusinessServices;
@@ -55,6 +56,13 @@ public class UserController : BaseV1Controller
 	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordUserDto changePasswordUserDto, Guid id)
 	{
 		var result = await _userService.ChangePasswordUserAsync(changePasswordUserDto, id);
+		return CustomResponse(result);
+	}
+
+	[HttpGet("paged")]
+	public async Task<IActionResult> GetPaged([FromQuery] PaginationRequest paginationRequest)
+	{
+		var result = await _userService.GedPagedAsync(paginationRequest);
 		return CustomResponse(result);
 	}
 

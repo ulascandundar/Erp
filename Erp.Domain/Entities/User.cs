@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Erp.Domain.Entities.NoSqlEntities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,4 +14,5 @@ public class User : BaseEntity
 	public List<string> Roles { get; set; }
 	public string ForgotPasswordOtp { get; set; }
 	public DateTime? ForgotPasswordOtpExpireDate { get; set; }
+	public Customer Customer { get; set; }
 }
