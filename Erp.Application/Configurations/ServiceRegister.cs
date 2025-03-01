@@ -1,13 +1,9 @@
 ﻿using Erp.Application.Services.AccountServices;
 using Erp.Application.Services.AuthServices;
+using Erp.Application.Services.CompanyServices;
 using Erp.Application.Services.UserServices;
 using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Erp.Application.Configurations;
 
@@ -20,6 +16,7 @@ public static class ServiceRegister
 		services.AddScoped<ICurrentUserService, CurrentUserService>();
 		services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 		services.AddScoped<IPendingUserService, PendingUserService>();
+		services.AddScoped<ICompanyService, CompanyService>();
 		return services;
 	}
 }

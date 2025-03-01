@@ -14,5 +14,7 @@ public class User : BaseEntity
 	public List<string> Roles { get; set; }
 	public string ForgotPasswordOtp { get; set; }
 	public DateTime? ForgotPasswordOtpExpireDate { get; set; }
-	public Customer Customer { get; set; }
+	public Guid? CompanyId { get; set; }
+	public Company Company { get; set; }
+	public Customer Customer { get; set; } //jsonb
 }

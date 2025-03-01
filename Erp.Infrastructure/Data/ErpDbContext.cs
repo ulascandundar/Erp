@@ -20,6 +20,7 @@ public class ErpDbContext : DbContext
 
 	public DbSet<User> Users { get; set; }
 	public DbSet<PendingUser> PendingUsers { get; set; }
+	public DbSet<Company> Companies { get; set; }
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
