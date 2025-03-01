@@ -5,7 +5,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Domain.Models;
 using Erp.Domain.Utils;
 using Erp.Infrastructure.Data;
-using Erp.Notifications.Services;
+using Erp.Notifications.Sender;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;

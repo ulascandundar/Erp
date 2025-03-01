@@ -5,17 +5,18 @@ using Erp.Domain.DTOs.PenginUser;
 using Erp.Domain.Entities;
 using Erp.Domain.Entities.NoSqlEntities;
 using Erp.Domain.Enums;
+using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Domain.Interfaces.Jwt;
 using Erp.Domain.Models;
 using Erp.Domain.Utils;
 using Erp.Infrastructure.Data;
-using Erp.Notifications.Services;
+using Erp.Notifications.Sender;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Erp.Application.Services.AccountServices;
 
-public class PendingUserService
+public class PendingUserService : IPendingUserService
 {
 	private readonly ErpDbContext _db;
 	private readonly IPasswordHasher<User> _passwordHasher;

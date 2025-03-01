@@ -19,6 +19,7 @@ public static class ServiceRegister
 		services.AddScoped<IAuthService, AuthService>();
 		services.AddScoped<ICurrentUserService, CurrentUserService>();
 		services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
+		services.AddScoped<IPendingUserService, PendingUserService>();
 		return services;
 	}
 }

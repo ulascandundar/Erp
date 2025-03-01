@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Erp.Notifications.Services;
+namespace Erp.Notifications.Sender;
 
 public class NotificationSender : IHostedService
 {

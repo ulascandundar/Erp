@@ -1,5 +1,6 @@
 ﻿using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.BusinessServices;
+using Erp.Notifications.Sender;
 using Erp.Notifications.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
