@@ -1,5 +1,6 @@
 ﻿using Erp.Domain.DTOs.Auth;
 using Erp.Domain.Entities;
+using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -39,6 +40,12 @@ public class JwtService : IJwtService
 				new Claim(ClaimTypes.Email, user.Email),
 			};
 
+		// Add CompanyId claim if available
+		if (user.CompanyId.HasValue)
+		{
+			claims.Add(new Claim(CustomClaims.CompanyId, user.CompanyId.Value.ToString()));
+		}
+
 		// Add roles
 		foreach (var role in user.Roles)
 		{
@@ -60,7 +67,8 @@ public class JwtService : IJwtService
 			Token = stringToken,
 			Expiration = token.ValidTo,
 			Email = user.Email,
-			Roles = user.Roles
+			Roles = user.Roles,
+			CompanyId = user.CompanyId
 		};
 	}
 

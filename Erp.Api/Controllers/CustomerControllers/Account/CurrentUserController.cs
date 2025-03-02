@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Account;
+namespace Erp.Api.Controllers.CustomerControllers.Account;
 
 [Authorize]
 public class CurrentUserController : BaseV1Controller

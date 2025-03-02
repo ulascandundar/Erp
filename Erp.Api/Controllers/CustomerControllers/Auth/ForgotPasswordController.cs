@@ -4,7 +4,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Auth;
+namespace Erp.Api.Controllers.CustomerControllers.Auth;
 public class ForgotPasswordController : BaseV1Controller
 {
 	private readonly IForgotPasswordService _forgotPasswordService;

@@ -1,4 +1,5 @@
 ﻿using Erp.Domain.DTOs.User;
+using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -26,6 +27,14 @@ public class CurrentUserService : ICurrentUserService
 		user.Id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 		user.Email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
 		user.Roles = _httpContextAccessor.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+		
+		// Extract CompanyId claim if available
+		var companyIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(CustomClaims.CompanyId);
+		if (companyIdClaim != null)
+		{
+			user.CompanyId = Guid.Parse(companyIdClaim.Value);
+		}
+		
 		return user;
 	}
 }

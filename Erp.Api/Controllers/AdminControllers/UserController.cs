@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Admin;
+namespace Erp.Api.Controllers.AdminControllers;
 [Authorize(Roles = Roles.Admin)]
 public class UserController : BaseV1Controller
 {

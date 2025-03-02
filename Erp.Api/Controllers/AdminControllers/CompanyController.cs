@@ -6,7 +6,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Admin;
+namespace Erp.Api.Controllers.AdminControllers;
 
 [Authorize(Roles = Roles.Admin)]
 public class CompanyController : BaseV1Controller

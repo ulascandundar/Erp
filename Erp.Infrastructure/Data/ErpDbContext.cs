@@ -1,10 +1,12 @@
 ﻿using Erp.Domain.Entities;
 using Erp.Domain.Entities.NoSqlEntities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,29 +16,40 @@ namespace Erp.Infrastructure.Data;
 
 public class ErpDbContext : DbContext
 {
-	public ErpDbContext(DbContextOptions<ErpDbContext> options) : base(options)
+	private readonly IHttpContextAccessor _httpContextAccessor;
+	public ErpDbContext(DbContextOptions<ErpDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
 	{
+		_httpContextAccessor = httpContextAccessor;
 	}
 
 	public DbSet<User> Users { get; set; }
 	public DbSet<PendingUser> PendingUsers { get; set; }
 	public DbSet<Company> Companies { get; set; }
+	public DbSet<Product> Products { get; set; }
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
+		var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		Guid? userGuid = null;
+		if (!string.IsNullOrEmpty(userId))
+		{
+			userGuid = Guid.Parse(userId);
+		}
 		var entries = ChangeTracker.Entries<BaseEntity>()
 			.Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
+	
 		foreach (var entry in entries)
 		{
 			if (entry.State == EntityState.Added)
 			{
 				entry.Entity.CreatedAt = DateTime.UtcNow;
 				entry.Entity.IsDeleted = false;
+				entry.Entity.CreatedById = userGuid;
 			}
 			else if (entry.State == EntityState.Modified)
 			{
 				entry.Entity.UpdatedAt = DateTime.UtcNow;
+				entry.Entity.UpdatedById = userGuid;
 			}
 		}
 

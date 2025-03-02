@@ -3,7 +3,7 @@ using Erp.Domain.DTOs.Auth;
 using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Auth;
+namespace Erp.Api.Controllers.CustomerControllers.Auth;
 public class LoginController : BaseV1Controller
 {
 	private readonly IAuthService _authService;

@@ -4,7 +4,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Account;
+namespace Erp.Api.Controllers.CustomerControllers.Account;
 
 public class PendingUserController : BaseV1Controller
 {

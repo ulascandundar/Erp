@@ -12,4 +12,5 @@ public class TokenDto
 	public DateTime Expiration { get; set; }
 	public List<string> Roles { get; set; }
 	public string Email { get; set; }
+	public Guid? CompanyId { get; set; }
 }
