@@ -40,6 +40,21 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCaching();
 builder.Services.AddCachedService<IUserService, UserService>();
 builder.Services.RegisterNotificationFactory();
+
+// CORS ayarları - tüm kaynaklardan gelen isteklere izin ver
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAll", 
+		builder =>
+		{
+			builder
+				.WithOrigins("http://localhost:3000")
+				.AllowAnyMethod()    
+				.AllowAnyHeader()
+				.AllowCredentials();
+		});
+});
+
 builder.Services
 	.AddApiVersioning(option =>
 	{
@@ -51,6 +66,9 @@ builder.Services
 // Configure the HTTP request pipeline.
 app.UseAuthentication();
 app.UseHttpsRedirection();
+
+// CORS middleware'ini etkinleştir
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 app.UseSwaggerServices();
