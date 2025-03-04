@@ -1,5 +1,6 @@
 ﻿using Erp.Application.Services.AccountServices;
 using Erp.Application.Services.AuthServices;
+using Erp.Application.Services.CategoryServices;
 using Erp.Application.Services.CompanyServices;
 using Erp.Application.Services.ProductServices;
 using Erp.Application.Services.UserServices;
@@ -19,6 +20,7 @@ public static class ServiceRegister
 		services.AddScoped<IPendingUserService, PendingUserService>();
 		services.AddScoped<ICompanyService, CompanyService>();
 		services.AddScoped<IProductService, ProductService>();
+		services.AddScoped<ICategoryService, CategoryService>();
 		return services;
 	}
 }
