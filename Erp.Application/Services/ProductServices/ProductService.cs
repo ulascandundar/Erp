@@ -171,7 +171,7 @@ public class ProductService : IProductService
 			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
 		}
 
-		var product = await _db.Products.FirstOrDefaultAsync(
+		var product = await _db.Products.Include(o=>o.ProductCategories).FirstOrDefaultAsync(
 			x => x.Id == productId &&
 			x.CompanyId == currentUser.CompanyId.Value &&
 			!x.IsDeleted);
@@ -246,7 +246,7 @@ public class ProductService : IProductService
 				x.SKU.Contains(paginationRequest.Search) ||
 				x.Barcode.Contains(paginationRequest.Search));
 		}
-
+		query = query.Include(x => x.ProductCategories).ThenInclude(o=>o.Category);
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
 		var dtos = _mapper.Map<List<ProductDto>>(entityResult.Items);
 

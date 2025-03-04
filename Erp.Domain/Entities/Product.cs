@@ -15,4 +15,5 @@ public class Product : BaseEntity
 	public string Barcode { get; set; }
 	public Guid CompanyId { get; set; }
 	public Company Company { get; set; }
+	public List<ProductCategory> ProductCategories { get; set; }
 }

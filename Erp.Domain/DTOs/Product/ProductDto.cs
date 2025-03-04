@@ -1,4 +1,6 @@
 using System;
+using Erp.Domain.DTOs.Category;
+using Erp.Domain.DTOs.ProductCategory;
 
 namespace Erp.Domain.DTOs.Product;
 
@@ -13,4 +15,5 @@ public class ProductDto
     public Guid CompanyId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
 } 
