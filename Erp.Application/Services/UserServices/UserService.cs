@@ -49,11 +49,11 @@ public class UserService : IUserService
 		return dto;
 	}
 	[InMemoryCache(expirationMinutes: 60,cacheKey:CacheKeys.AllUsers)]
-	public Task<List<UserDto>> GetAllUsersAsync()
+	public async Task<List<UserDto>> GetAllUsersAsync()
 	{
-		var entities = _db.Users.Where(x => x.IsDeleted == false).ToList();
+		var entities = await _db.Users.Where(x => x.IsDeleted == false).ToListAsync();
 		var dtos = _mapper.Map<List<UserDto>>(entities);
-		return Task.FromResult(dtos);
+		return dtos;
 	}
 
 	public async Task<UserDto> GetUserByIdAsync(Guid id)

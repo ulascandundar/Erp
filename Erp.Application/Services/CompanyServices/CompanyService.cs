@@ -29,7 +29,7 @@ public class CompanyService : ICompanyService
         var companyExists = await _db.Companies.AnyAsync(x => x.TaxNumber == companyCreateDto.TaxNumber && !x.IsDeleted);
         if (companyExists)
         {
-            throw new Exception("Bu vergi numarası ile kayıtlı şirket bulunmaktadır.");
+            throw new CompanyTaxNumberAlreadyExistException();
         }
 
         var company = _mapper.Map<Company>(companyCreateDto);
@@ -122,7 +122,7 @@ public class CompanyService : ICompanyService
         var entityResult = await query.ToPagedResultAsync(paginationRequest);
         var dtos = _mapper.Map<List<CompanyDto>>(entityResult.Items);
         
-        return new CustomPagedResult<CompanyDto>
+		return new CustomPagedResult<CompanyDto>
         {
             Items = dtos,
             TotalCount = entityResult.TotalCount,
