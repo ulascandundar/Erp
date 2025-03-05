@@ -1,4 +1,7 @@
-﻿using Erp.Domain.DTOs.User;
+﻿using Erp.Application.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.DTOs.User;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -10,11 +13,10 @@ namespace Erp.Application.Validators.UserValidator;
 
 public class ChangePasswordUserDtoValidator : AbstractValidator<ChangePasswordUserDto>
 {
-	public ChangePasswordUserDtoValidator()
+	public ChangePasswordUserDtoValidator(ILocalizationService localizationService)
 	{
 		RuleFor(x => x.Password)
-			.NotEmpty().WithMessage("Parola boş olamaz")
-			.NotNull().WithMessage("Parola boş olamaz")
-			.MinimumLength(6).WithMessage("Parola en az 6 karakterden oluşmalıdır");
+			.NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordRequired)
+			.MinimumLength(6).WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordMinLength);
 	}
 }

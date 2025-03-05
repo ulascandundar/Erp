@@ -2,43 +2,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Erp.Application.Extensions;
+using Erp.Domain.Constants;
 using Erp.Domain.DTOs.Company;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 
 namespace Erp.Application.Validators.CompanyValidator;
 
 public class CompanyCreateDtoValidator : AbstractValidator<CompanyCreateDto>
 {
-    public CompanyCreateDtoValidator()
+    public CompanyCreateDtoValidator(ILocalizationService localizationService)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Şirket adı boş olamaz")
-            .MaximumLength(100).WithMessage("Şirket adı en fazla 100 karakter olabilir");
+            .NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.CompanyNameRequired)
+            .MaximumLength(100).WithLocalizedMessage(localizationService, ResourceKeys.Validation.CompanyNameMaxLength);
 
         RuleFor(x => x.TaxNumber)
-            .NotEmpty().WithMessage("Vergi numarası boş olamaz")
-            .Length(10).WithMessage("Vergi numarası 10 haneli olmalıdır")
-            .Matches("^[0-9]*$").WithMessage("Vergi numarası sadece rakamlardan oluşmalıdır");
+            .NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.CompanyTaxNumberRequired)
+            .Length(10).WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidTaxNumber)
+            .Matches("^[0-9]*$").WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidTaxNumber);
 
         RuleFor(x => x.Email)
-            .EmailAddress().WithMessage("Geçerli bir email adresi giriniz")
+            .EmailAddress().WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidEmail)
             .When(x => !string.IsNullOrEmpty(x.Email));
 
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty().WithMessage("Telefon numarası boş olamaz")
-            .Length(10).WithMessage("Telefon numarası 10 haneli olmalıdır")
-            .Matches("^[0-9]*$").WithMessage("Telefon numarası sadece rakamlardan oluşmalıdır");
+            .NotEmpty().WithRequiredMessage(localizationService, "Phone Number")
+            .Length(10).WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidPhoneNumber)
+            .Matches("^[0-9]*$").WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidPhoneNumber);
 
         RuleFor(x => x.Address)
-            .NotEmpty().WithMessage("Adres boş olamaz")
-            .MaximumLength(250).WithMessage("Adres en fazla 250 karakter olabilir");
+            .NotEmpty().WithRequiredMessage(localizationService, "Address")
+            .MaximumLength(250).WithLocalizedMessage(localizationService, ResourceKeys.Validation.CompanyAddressMaxLength);
 
         RuleFor(x => x.Website)
-            .MaximumLength(100).WithMessage("Website adresi en fazla 100 karakter olabilir")
+            .MaximumLength(100).WithLocalizedMessage(localizationService, ResourceKeys.Validation.WebsiteMaxLength)
             .When(x => !string.IsNullOrEmpty(x.Website));
 
         RuleFor(x => x.Description)
-            .MaximumLength(500).WithMessage("Açıklama en fazla 500 karakter olabilir")
+            .MaximumLength(500).WithLocalizedMessage(localizationService, ResourceKeys.Validation.DescriptionMaxLength)
             .When(x => !string.IsNullOrEmpty(x.Description));
     }
 }

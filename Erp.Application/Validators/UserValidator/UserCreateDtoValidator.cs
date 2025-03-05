@@ -1,5 +1,8 @@
-﻿using Erp.Domain.DTOs.Auth;
+﻿using Erp.Application.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.DTOs.Auth;
 using Erp.Domain.DTOs.User;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -11,18 +14,19 @@ namespace Erp.Application.Validators.UserValidator;
 
 public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
 {
-	public UserCreateDtoValidator()
+	public UserCreateDtoValidator(ILocalizationService localizationService)
 	{
 		RuleFor(x => x.Email)
-			.EmailAddress().WithMessage("Geçerli bir email adresi giriniz")
+			.EmailAddress().WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidEmail)
 			.When(x => !string.IsNullOrEmpty(x.Email));
+		
 		RuleFor(x => x.Password)
-			.NotEmpty().WithMessage("Parola boş olamaz")
-			.NotNull().WithMessage("Parola boş olamaz")
-			.MinimumLength(6).WithMessage("Parola en az 6 karakterden oluşmalıdır");
+			.NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordRequired)
+			.MinimumLength(6).WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordMinLength);
+		
 		RuleFor(x => x.Roles)
-			.NotEmpty().WithMessage("Rol boş olamaz")
+			.NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.RolesRequired)
 			.Must(roles => roles != null && roles.Any())
-			.WithMessage("En az 1 adet rol seçilmelidir");
+			.WithLocalizedMessage(localizationService, ResourceKeys.Validation.AtLeastOneRoleRequired);
 	}
 }

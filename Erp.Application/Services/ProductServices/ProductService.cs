@@ -1,5 +1,6 @@
 using AutoMapper;
 using Erp.Application.Common.Extensions;
+using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.Product;
@@ -19,12 +20,18 @@ public class ProductService : IProductService
 	private readonly ErpDbContext _db;
 	private readonly IMapper _mapper;
 	private readonly ICurrentUserService _currentUserService;
+	private readonly ILocalizationService _localizationService;
 
-	public ProductService(ErpDbContext db, IMapper mapper, ICurrentUserService currentUserService)
+	public ProductService(
+		ErpDbContext db, 
+		IMapper mapper, 
+		ICurrentUserService currentUserService,
+		ILocalizationService localizationService)
 	{
 		_db = db;
 		_mapper = mapper;
 		_currentUserService = currentUserService;
+		_localizationService = localizationService;
 	}
 
 	public async Task<ProductDto> CreateProductAsync(ProductCreateDto productCreateDto)
@@ -33,7 +40,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		// Veritabanı kontrolleri
@@ -84,7 +91,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var products = await _db.Products
@@ -100,7 +107,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var product = await _db.Products.FirstOrDefaultAsync(
@@ -110,7 +117,7 @@ public class ProductService : IProductService
 
 		if (product == null)
 		{
-			throw new NullValueException("Ürün bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.ProductNotFound));
 		}
 
 		return _mapper.Map<ProductDto>(product);
@@ -122,7 +129,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var product = await _db.Products.FirstOrDefaultAsync(
@@ -131,7 +138,7 @@ public class ProductService : IProductService
 
 		if (product == null)
 		{
-			throw new NullValueException("Ürün bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.ProductNotFound));
 		}
 
 		_db.Products.Remove(product);
@@ -144,7 +151,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var product = await _db.Products.FirstOrDefaultAsync(
@@ -154,7 +161,7 @@ public class ProductService : IProductService
 
 		if (product == null)
 		{
-			throw new NullValueException("Ürün bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.ProductNotFound));
 		}
 
 		product.IsDeleted = true;
@@ -168,7 +175,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var product = await _db.Products.Include(o=>o.ProductCategories).FirstOrDefaultAsync(
@@ -178,7 +185,7 @@ public class ProductService : IProductService
 
 		if (product == null)
 		{
-			throw new NullValueException("Ürün bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.ProductNotFound));
 		}
 
 		// Veritabanı kontrolleri
@@ -232,7 +239,7 @@ public class ProductService : IProductService
 
 		if (!currentUser.CompanyId.HasValue)
 		{
-			throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
 		}
 
 		var query = _db.Products

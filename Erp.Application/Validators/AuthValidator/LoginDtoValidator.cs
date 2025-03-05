@@ -1,4 +1,7 @@
-﻿using Erp.Domain.DTOs.Auth;
+﻿using Erp.Application.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.DTOs.Auth;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -10,10 +13,10 @@ namespace Erp.Application.Validators.AuthValidator;
 
 public class LoginDtoValidator : AbstractValidator<UserLoginDto>
 {
-	public LoginDtoValidator()
+	public LoginDtoValidator(ILocalizationService localizationService)
 	{
 		RuleFor(x => x.Email)
-			.EmailAddress().WithMessage("Geçerli bir email adresi giriniz")
+			.EmailAddress().WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidEmail)
 			.When(x => !string.IsNullOrEmpty(x.Email));
 	}
 }

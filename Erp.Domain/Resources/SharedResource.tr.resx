@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Error Messages -->
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Kullanıcı bulunamadı</value>
+  </data>
+  <data name="ProductNotFound" xml:space="preserve">
+    <value>Ürün bulunamadı</value>
+  </data>
+  <data name="CategoryNotFound" xml:space="preserve">
+    <value>Kategori bulunamadı</value>
+  </data>
+  <data name="CompanyNotFound" xml:space="preserve">
+    <value>Şirket bulunamadı</value>
+  </data>
+  <data name="UserNotBelongToCompany" xml:space="preserve">
+    <value>Kullanıcı bir şirkete bağlı değil</value>
+  </data>
+  <data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>Bu kategori adı şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="InvalidVerificationCode" xml:space="preserve">
+    <value>Doğrulama kodu geçersiz</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Email yada şifre yanlış</value>
+  </data>
+  <data name="ProductNameAlreadyExists" xml:space="preserve">
+    <value>Bu ürün adı şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="SkuAlreadyExists" xml:space="preserve">
+    <value>Bu SKU şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="BarcodeAlreadyExists" xml:space="preserve">
+    <value>Bu barkod şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>Bu e-posta adresi zaten kullanılmaktadır</value>
+  </data>
+  <data name="PhoneNumberAlreadyExists" xml:space="preserve">
+    <value>Bu telefon numarası zaten kullanılmaktadır</value>
+  </data>
+  <data name="TaxNumberAlreadyExists" xml:space="preserve">
+    <value>Bu vergi numarası zaten kullanılmaktadır</value>
+  </data>
+  
+  <!-- Validation Messages -->
+  <data name="RequiredField" xml:space="preserve">
+    <value>{0} alanı zorunludur</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Geçersiz e-posta adresi</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Şifre en az 8 karakter uzunluğunda olmalı ve en az bir büyük harf, bir küçük harf ve bir rakam içermelidir</value>
+  </data>
+  <data name="InvalidPhoneNumber" xml:space="preserve">
+    <value>Geçersiz telefon numarası</value>
+  </data>
+  <data name="InvalidTaxNumber" xml:space="preserve">
+    <value>Geçersiz vergi numarası</value>
+  </data>
+  
+  <!-- Success Messages -->
+  <data name="OperationSuccessful" xml:space="preserve">
+    <value>İşlem başarıyla tamamlandı</value>
+  </data>
+  <data name="RecordCreated" xml:space="preserve">
+    <value>Kayıt başarıyla oluşturuldu</value>
+  </data>
+  <data name="RecordUpdated" xml:space="preserve">
+    <value>Kayıt başarıyla güncellendi</value>
+  </data>
+  <data name="RecordDeleted" xml:space="preserve">
+    <value>Kayıt başarıyla silindi</value>
+  </data>
+</root> 

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Erp.Application.Services.UserServices;
+using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.User;
@@ -25,6 +26,7 @@ namespace Erp.Application.Tests.Services.UserServices
         private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
         private readonly Mock<IPasswordHasher<User>> _passwordHasherMock;
+        private readonly Mock<ILocalizationService> _localizationServiceMock;
         private readonly Guid _companyId = Guid.NewGuid();
         private readonly Guid _userId = Guid.NewGuid();
 
@@ -72,6 +74,17 @@ namespace Erp.Application.Tests.Services.UserServices
                 Roles = new List<string> { "Admin" }
             };
             _currentUserServiceMock.Setup(x => x.GetCurrentUser()).Returns(currentUser);
+            
+            // LocalizationService mock'u
+            _localizationServiceMock = new Mock<ILocalizationService>();
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.UserNotFound))
+                .Returns("Kullanıcı bulunamadı");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany))
+                .Returns("Kullanıcı bir şirkete bağlı değil");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.EmailAlreadyExists))
+                .Returns("Bu e-posta adresi zaten kullanılmaktadır");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns<string, object[]>((key, args) => string.Format(key, args));
         }
 
         private ErpDbContext CreateDbContext()
@@ -87,7 +100,7 @@ namespace Erp.Application.Tests.Services.UserServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var userCreateDto = new UserCreateDto
             {
@@ -131,7 +144,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(existingUser);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var userCreateDto = new UserCreateDto
             {
@@ -189,7 +202,7 @@ namespace Erp.Application.Tests.Services.UserServices
             var selectedForRemoveUser = await context.Users.FirstOrDefaultAsync(u => u.Email == "deleted@example.com");
             context.Users.Remove(selectedForRemoveUser);
             await context.SaveChangesAsync();
-			var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+			var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await userService.GetAllUsersAsync();
@@ -222,7 +235,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await userService.GetUserByIdAsync(userId);
@@ -240,7 +253,7 @@ namespace Erp.Application.Tests.Services.UserServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
             var nonExistingId = Guid.NewGuid();
 
             // Act & Assert
@@ -268,7 +281,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await userService.SoftDeleteUserAsync(userId);
@@ -283,7 +296,7 @@ namespace Erp.Application.Tests.Services.UserServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
             var nonExistingId = Guid.NewGuid();
 
             // Act & Assert
@@ -311,7 +324,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await userService.HardDeleteUserAsync(userId);
@@ -326,7 +339,7 @@ namespace Erp.Application.Tests.Services.UserServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
             var nonExistingId = Guid.NewGuid();
 
             // Act & Assert
@@ -354,7 +367,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var changePasswordDto = new ChangePasswordUserDto
             {
@@ -392,7 +405,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.Add(currentUser);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var changePasswordDto = new ChangePasswordUserDto
             {
@@ -448,7 +461,7 @@ namespace Erp.Application.Tests.Services.UserServices
             selectedForRemoveUser.IsDeleted = true;
             context.Users.Update(selectedForRemoveUser);
 			await context.SaveChangesAsync();
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var paginationRequest = new PaginationRequest
             {
@@ -518,7 +531,7 @@ namespace Erp.Application.Tests.Services.UserServices
             context.Users.AddRange(users);
             await context.SaveChangesAsync();
 
-            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object);
+            var userService = new UserService(context, _passwordHasherMock.Object, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var paginationRequest = new PaginationRequest
             {

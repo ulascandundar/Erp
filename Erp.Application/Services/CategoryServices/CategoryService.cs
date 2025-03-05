@@ -1,6 +1,7 @@
 using AutoMapper;
 using Erp.Application.Common.Extensions;
 using Erp.Application.Validators.CategoryValidator;
+using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Category;
 using Erp.Domain.DTOs.Pagination;
@@ -21,15 +22,18 @@ public class CategoryService : ICategoryService
     private readonly ErpDbContext _db;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
+    private readonly ILocalizationService _localizationService;
 
     public CategoryService(
         ErpDbContext db, 
         IMapper mapper, 
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        ILocalizationService localizationService)
     {
         _db = db;
         _mapper = mapper;
         _currentUserService = currentUserService;
+        _localizationService = localizationService;
     }
 
     public async Task<CategoryDto> CreateCategoryAsync(CategoryCreateDto categoryCreateDto)
@@ -38,7 +42,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         // Veritabanı kontrolleri
@@ -50,7 +54,7 @@ public class CategoryService : ICategoryService
             
         if (nameExists)
         {
-            throw new NullValueException("Bu kategori adı şirketinizde zaten kullanılmaktadır");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNameAlreadyExists));
         }
 
         var category = _mapper.Map<Category>(categoryCreateDto);
@@ -68,7 +72,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var categories = await _db.Categories
@@ -84,7 +88,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var category = await _db.Categories.FirstOrDefaultAsync(
@@ -94,7 +98,7 @@ public class CategoryService : ICategoryService
             
         if (category == null)
         {
-            throw new NullValueException("Kategori bulunamadı");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
         }
         
         return _mapper.Map<CategoryDto>(category);
@@ -106,7 +110,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var category = await _db.Categories.FirstOrDefaultAsync(
@@ -115,7 +119,7 @@ public class CategoryService : ICategoryService
             
         if (category == null)
         {
-            throw new NullValueException("Kategori bulunamadı");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
         }
 
         _db.Categories.Remove(category);
@@ -128,7 +132,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var category = await _db.Categories.FirstOrDefaultAsync(
@@ -138,7 +142,7 @@ public class CategoryService : ICategoryService
             
         if (category == null)
         {
-            throw new NullValueException("Kategori bulunamadı");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
         }
 
         category.IsDeleted = true;
@@ -153,7 +157,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var category = await _db.Categories.FirstOrDefaultAsync(
@@ -163,7 +167,7 @@ public class CategoryService : ICategoryService
             
         if (category == null)
         {
-            throw new NullValueException("Kategori bulunamadı");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
         }
 
         // Veritabanı kontrolleri
@@ -176,7 +180,7 @@ public class CategoryService : ICategoryService
             
         if (nameExists)
         {
-            throw new NullValueException("Bu kategori adı şirketinizde zaten kullanılmaktadır");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNameAlreadyExists));
         }
 
         _mapper.Map(categoryUpdateDto, category);
@@ -194,7 +198,7 @@ public class CategoryService : ICategoryService
         
         if (!currentUser.CompanyId.HasValue)
         {
-            throw new NullValueException("Kullanıcı bir şirkete bağlı değil");
+            throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
         var query = _db.Categories

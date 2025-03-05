@@ -1,20 +1,24 @@
-﻿using Erp.Domain.DTOs.Auth;
+﻿using Erp.Application.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.DTOs.Auth;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 
 namespace Erp.Application.Validators.AuthValidator;
 
 public class ForgotPasswordWithPasswordDtoValidator : AbstractValidator<ForgotPasswordWithPasswordDto>
 {
-	public ForgotPasswordWithPasswordDtoValidator()
+	public ForgotPasswordWithPasswordDtoValidator(ILocalizationService localizationService)
 	{
-		RuleFor(x => x.Email).NotEmpty().WithMessage("Email boş olamaz")
-			.NotNull().WithMessage("Email boş olamaz")
-			.EmailAddress().WithMessage("Geçersiz email adresi");
+		RuleFor(x => x.Email)
+			.NotEmpty().WithRequiredMessage(localizationService, "Email")
+			.EmailAddress().WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidEmail);
 
-		RuleFor(x => x.Otp).NotEmpty().WithMessage("Otp boş olamaz");
+		RuleFor(x => x.Otp)
+			.NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.OtpRequired);
 
-		RuleFor(x => x.Password).NotEmpty().WithMessage("Parola boş olamaz")
-			.NotNull().WithMessage("Parola boş olamaz")
-			.MinimumLength(6).WithMessage("Parola en az 6 karakterden oluşmalıdır");
+		RuleFor(x => x.Password)
+			.NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordRequired)
+			.MinimumLength(6).WithLocalizedMessage(localizationService, ResourceKeys.Validation.UserPasswordMinLength);
 	}
 }

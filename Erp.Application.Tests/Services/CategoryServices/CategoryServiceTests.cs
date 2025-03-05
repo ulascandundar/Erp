@@ -1,6 +1,7 @@
 using AutoMapper;
 using Erp.Application.Mappings;
 using Erp.Application.Services.CategoryServices;
+using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Category;
 using Erp.Domain.DTOs.Pagination;
@@ -25,6 +26,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
         private readonly IMapper _mapper;
         private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private readonly Mock<ILocalizationService> _localizationServiceMock;
         private readonly Guid _companyId = Guid.NewGuid();
         private readonly Guid _userId = Guid.NewGuid();
 
@@ -53,6 +55,17 @@ namespace Erp.Application.Tests.Services.CategoryServices
                 CompanyId = _companyId
             };
             _currentUserServiceMock.Setup(x => x.GetCurrentUser()).Returns(currentUser);
+            
+            // LocalizationService mock'u
+            _localizationServiceMock = new Mock<ILocalizationService>();
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound))
+                .Returns("Kategori bulunamadı");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany))
+                .Returns("Kullanıcı bir şirkete bağlı değil");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(ResourceKeys.Errors.CategoryNameAlreadyExists))
+                .Returns("Bu kategori adı şirketinizde zaten kullanılmaktadır");
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns<string, object[]>((key, args) => string.Format(key, args));
         }
 
         private ErpDbContext CreateDbContext()
@@ -68,7 +81,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var categoryCreateDto = new CategoryCreateDto
             {
@@ -103,7 +116,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             });
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var categoryCreateDto = new CategoryCreateDto
             {
@@ -130,7 +143,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
                 CompanyId = null // CompanyId yok
             });
 
-            var categoryService = new CategoryService(context, _mapper, currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var categoryCreateDto = new CategoryCreateDto
             {
@@ -193,7 +206,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             var selectedForRemoveCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Category 4");
 			context.Categories.Remove(selectedForRemoveCategory);
 			await context.SaveChangesAsync();
-			var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+			var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await categoryService.GetAllCategoriesAsync();
@@ -226,7 +239,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.Add(category);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await categoryService.GetCategoryByIdAsync(categoryId);
@@ -244,7 +257,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
             var nonExistingId = Guid.NewGuid();
 
             // Act & Assert
@@ -271,7 +284,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.Add(category);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var updateDto = new CategoryUpdateDto
             {
@@ -325,7 +338,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             );
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Category 2'yi Category 1 ile aynı isimle güncellemeye çalış
             var updateDto = new CategoryUpdateDto
@@ -358,7 +371,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.Add(category);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await categoryService.SoftDeleteCategoryAsync(categoryId);
@@ -387,7 +400,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.Add(category);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await categoryService.HardDeleteCategoryAsync(categoryId);
@@ -420,7 +433,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.AddRange(categories);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var paginationRequest = new PaginationRequest
             {
@@ -486,7 +499,7 @@ namespace Erp.Application.Tests.Services.CategoryServices
             context.Categories.AddRange(categories);
             await context.SaveChangesAsync();
 
-            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object);
+            var categoryService = new CategoryService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var paginationRequest = new PaginationRequest
             {

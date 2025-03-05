@@ -9,6 +9,8 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Notifications.Configurations;
 using Erp.Socket.Configurations;
 using Erp.Socket.Hubs;
+using Erp.Application.Services.LocalizationServices;
+using Erp.Domain.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,9 +68,49 @@ builder.Services
 		option.DefaultApiVersion = new ApiVersion(1, 0);
 		option.AssumeDefaultVersionWhenUnspecified = true;
 		option.ApiVersionReader = new HeaderApiVersionReader();
-	}); var app = builder.Build();
+	});
+
+// Add localization services
+builder.Services.AddLocalization();
+
+// Configure supported cultures and localization
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+            factory.Create(typeof(SharedResource));
+    })
+    .AddViewLocalization();
+
+// Configure supported cultures
+var supportedCultures = new[] { "tr-TR", "en-US" };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.SetDefaultCulture(supportedCultures[0]) // Turkish is default
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
+// Register localization service
+builder.Services.AddScoped<ILocalizationService, LocalizationService>();
+
+// Add SharedResource localization
+builder.Services.AddSingleton<SharedResource>();
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
+
+// Use localization middleware
+app.UseRequestLocalization();
+
+app.UseHttpsRedirection();
+
 app.UseRouting();
 
 // CORS middleware'ini etkinleştir

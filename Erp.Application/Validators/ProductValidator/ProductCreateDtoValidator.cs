@@ -1,27 +1,30 @@
+using Erp.Application.Extensions;
+using Erp.Domain.Constants;
 using Erp.Domain.DTOs.Product;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 
 namespace Erp.Application.Validators.ProductValidator;
 
 public class ProductCreateDtoValidator : AbstractValidator<ProductCreateDto>
 {
-    public ProductCreateDtoValidator()
+    public ProductCreateDtoValidator(ILocalizationService localizationService)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Ürün adı boş olamaz")
-            .MaximumLength(100).WithMessage("Ürün adı en fazla 100 karakter olabilir");
+            .NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductNameRequired)
+            .MaximumLength(100).WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductNameMaxLength);
 
         RuleFor(x => x.SKU)
-            .NotEmpty().WithMessage("SKU boş olamaz")
-            .MaximumLength(50).WithMessage("SKU en fazla 50 karakter olabilir");
+            .NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductSkuRequired)
+            .MaximumLength(50).WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductSkuMaxLength);
 
         RuleFor(x => x.Description)
-            .MaximumLength(500).WithMessage("Açıklama en fazla 500 karakter olabilir");
+            .MaximumLength(500).WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductDescriptionMaxLength);
 
         RuleFor(x => x.Price)
-            .GreaterThan(0).WithMessage("Fiyat 0'dan büyük olmalıdır");
+            .GreaterThan(0).WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductPriceGreaterThanZero);
 
         RuleFor(x => x.Barcode)
-            .MaximumLength(50).WithMessage("Barkod en fazla 50 karakter olabilir");
+            .MaximumLength(50).WithLocalizedMessage(localizationService, ResourceKeys.Validation.ProductBarcodeMaxLength);
     }
 } 

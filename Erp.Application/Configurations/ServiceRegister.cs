@@ -2,6 +2,7 @@
 using Erp.Application.Services.AuthServices;
 using Erp.Application.Services.CategoryServices;
 using Erp.Application.Services.CompanyServices;
+using Erp.Application.Services.LocalizationServices;
 using Erp.Application.Services.NotificationServices;
 using Erp.Application.Services.ProductServices;
 using Erp.Application.Services.UserServices;
@@ -15,7 +16,8 @@ namespace Erp.Application.Configurations;
 public static class ServiceRegister
 {
 	public static IServiceCollection RegisterServices(this IServiceCollection services)
-	{ 
+	{
+		services.AddScoped<ILocalizationService, LocalizationService>();
 		services.AddScoped<IUserService, UserService>(); 
 		services.AddScoped<IAuthService, AuthService>();
 		services.AddScoped<ICurrentUserService, CurrentUserService>();

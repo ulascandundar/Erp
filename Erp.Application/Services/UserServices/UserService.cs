@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Application.Common.Extensions;
+using Erp.Domain.Constants;
 
 namespace Erp.Application.Services.UserServices;
 
@@ -26,12 +27,20 @@ public class UserService : IUserService
 	private readonly IPasswordHasher<User> _passwordHasher;
 	private readonly IMapper _mapper;
 	private readonly ICurrentUserService _currentUserService;
-	public UserService(ErpDbContext db, IPasswordHasher<User> passwordHasher, IMapper mapper, ICurrentUserService currentUserService)
+	private readonly ILocalizationService _localizationService;
+	
+	public UserService(
+		ErpDbContext db, 
+		IPasswordHasher<User> passwordHasher, 
+		IMapper mapper, 
+		ICurrentUserService currentUserService,
+		ILocalizationService localizationService)
 	{
 		_db = db;
 		_passwordHasher = passwordHasher;
 		_mapper = mapper;
 		_currentUserService = currentUserService;
+		_localizationService = localizationService;
 	}
 
 	public async Task<UserDto> CreateUserAsync(UserCreateDto userCreateDto)
@@ -48,6 +57,7 @@ public class UserService : IUserService
 		var dto = _mapper.Map<UserDto>(user);
 		return dto;
 	}
+	
 	[InMemoryCache(expirationMinutes: 60,cacheKey:CacheKeys.AllUsers)]
 	public async Task<List<UserDto>> GetAllUsersAsync()
 	{
@@ -61,7 +71,7 @@ public class UserService : IUserService
 		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
 		if (user == null)
 		{
-			throw new NullValueException("Kullanıcı bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotFound));
 		}
 		var dto = _mapper.Map<UserDto>(user);
 		return dto;
@@ -72,7 +82,7 @@ public class UserService : IUserService
 		var user = _db.Users.FirstOrDefault(x => x.Id == id);
 		if (user == null)
 		{
-			throw new NullValueException("Kullanıcı bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotFound));
 		}
 		_db.Users.Remove(user);
 		await _db.SaveChangesAsync();
@@ -83,7 +93,7 @@ public class UserService : IUserService
 		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
 		if (user == null)
 		{
-			throw new NullValueException("Kullanıcı bulunamadı");
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotFound));
 		}
 		user.IsDeleted = true;
 		_db.Users.Update(user);

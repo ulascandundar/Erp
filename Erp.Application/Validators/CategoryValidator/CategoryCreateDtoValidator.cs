@@ -1,17 +1,20 @@
+using Erp.Application.Extensions;
+using Erp.Domain.Constants;
 using Erp.Domain.DTOs.Category;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 
 namespace Erp.Application.Validators.CategoryValidator;
 
 public class CategoryCreateDtoValidator : AbstractValidator<CategoryCreateDto>
 {
-    public CategoryCreateDtoValidator()
+    public CategoryCreateDtoValidator(ILocalizationService localizationService)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Kategori adı boş olamaz")
-            .MaximumLength(100).WithMessage("Kategori adı en fazla 100 karakter olabilir");
+            .NotEmpty().WithLocalizedMessage(localizationService, ResourceKeys.Validation.CategoryNameRequired)
+            .MaximumLength(100).WithLocalizedMessage(localizationService, ResourceKeys.Validation.CategoryNameMaxLength);
 
         RuleFor(x => x.Description)
-            .MaximumLength(500).WithMessage("Açıklama en fazla 500 karakter olabilir");
+            .MaximumLength(500).WithLocalizedMessage(localizationService, ResourceKeys.Validation.CategoryDescriptionMaxLength);
     }
 } 

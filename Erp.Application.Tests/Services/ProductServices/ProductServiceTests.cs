@@ -10,6 +10,11 @@ using Erp.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Erp.Application.Tests.Services.ProductServices
 {
@@ -19,6 +24,7 @@ namespace Erp.Application.Tests.Services.ProductServices
         private readonly IMapper _mapper;
         private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        private readonly Mock<ILocalizationService> _localizationServiceMock;
         private readonly Guid _companyId = Guid.NewGuid();
         private readonly Guid _userId = Guid.NewGuid();
 
@@ -47,6 +53,13 @@ namespace Erp.Application.Tests.Services.ProductServices
                 CompanyId = _companyId
             };
             _currentUserServiceMock.Setup(x => x.GetCurrentUser()).Returns(currentUser);
+            
+            // LocalizationService mock'u
+            _localizationServiceMock = new Mock<ILocalizationService>();
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(It.IsAny<string>()))
+                .Returns<string>(key => key);
+            _localizationServiceMock.Setup(x => x.GetLocalizedString(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns<string, object[]>((key, args) => string.Format(key, args));
         }
 
         private ErpDbContext CreateDbContext()
@@ -62,8 +75,19 @@ namespace Erp.Application.Tests.Services.ProductServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
-
+            
+            // Kategori oluştur
+            var category = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Category",
+                CompanyId = _companyId
+            };
+            await context.Categories.AddAsync(category);
+            await context.SaveChangesAsync();
+            
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
+            
             var productCreateDto = new ProductCreateDto
             {
                 Name = "Test Product",
@@ -104,7 +128,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             });
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var productCreateDto = new ProductCreateDto
             {
@@ -138,7 +162,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             });
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var productCreateDto = new ProductCreateDto
             {
@@ -172,7 +196,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             });
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var productCreateDto = new ProductCreateDto
             {
@@ -202,7 +226,7 @@ namespace Erp.Application.Tests.Services.ProductServices
                 CompanyId = null // CompanyId yok
             });
 
-            var productService = new ProductService(context, _mapper, currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var productCreateDto = new ProductCreateDto
             {
@@ -273,7 +297,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             selectedForRemoveProduct.IsDeleted = true;
             context.Products.Update(selectedForRemoveProduct);
             await context.SaveChangesAsync();
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await productService.GetAllProductsAsync();
@@ -309,7 +333,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             context.Products.Add(product);
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             var result = await productService.GetProductByIdAsync(productId);
@@ -329,7 +353,7 @@ namespace Erp.Application.Tests.Services.ProductServices
         {
             // Arrange
             using var context = CreateDbContext();
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
             var nonExistingId = Guid.NewGuid();
 
             // Act & Assert
@@ -359,7 +383,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             context.Products.Add(product);
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             var updateDto = new ProductUpdateDto
             {
@@ -408,7 +432,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             context.Products.Add(product);
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await productService.SoftDeleteProductAsync(productId);
@@ -438,7 +462,7 @@ namespace Erp.Application.Tests.Services.ProductServices
             context.Products.Add(product);
             await context.SaveChangesAsync();
 
-            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object);
+            var productService = new ProductService(context, _mapper, _currentUserServiceMock.Object, _localizationServiceMock.Object);
 
             // Act
             await productService.HardDeleteProductAsync(productId);

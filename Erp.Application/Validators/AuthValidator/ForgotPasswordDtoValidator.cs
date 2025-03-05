@@ -1,4 +1,7 @@
-﻿using Erp.Domain.DTOs.Auth;
+﻿using Erp.Application.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.DTOs.Auth;
+using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -10,10 +13,10 @@ namespace Erp.Application.Validators.AuthValidator;
 
 public class ForgotPasswordDtoValidator : AbstractValidator<ForgotPasswordDto>
 {
-	public ForgotPasswordDtoValidator()
+	public ForgotPasswordDtoValidator(ILocalizationService localizationService)
 	{
-		RuleFor(x => x.Email).NotEmpty().WithMessage("Email boş olamaz");
-		RuleFor(x => x.Email).NotNull().WithMessage("Email boş olamaz");
-		RuleFor(x => x.Email).EmailAddress().WithMessage("Geçersiz email adresi");
+		RuleFor(x => x.Email)
+			.NotEmpty().WithRequiredMessage(localizationService, "Email")
+			.EmailAddress().WithLocalizedMessage(localizationService, ResourceKeys.Validation.InvalidEmail);
 	}
 }

@@ -12,4 +12,7 @@ public abstract class BaseException : Exception
 	public virtual HttpStatusCode StatusCode => HttpStatusCode.InternalServerError; // Default 500
 
 	protected BaseException(string message) : base(message) { }
+	
+	// Add support for localization
+	protected BaseException(string message, params object[] args) : base(string.Format(message, args)) { }
 }
