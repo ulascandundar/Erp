@@ -7,6 +7,8 @@ using Erp.Domain.Models;
 using Erp.Application.Services.UserServices;
 using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Notifications.Configurations;
+using Erp.Socket.Configurations;
+using Erp.Socket.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,17 +43,20 @@ builder.Services.AddCaching();
 builder.Services.AddCachedService<IUserService, UserService>();
 builder.Services.RegisterNotificationFactory();
 
-// CORS ayarları - tüm kaynaklardan gelen isteklere izin ver
+// Socket servislerini kaydet
+builder.Services.RegisterSocketServices();
+
+// CORS ayarları - SignalR için
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("AllowAll", 
+	options.AddPolicy("SignalRPolicy", 
 		builder =>
 		{
 			builder
-				.WithOrigins("http://localhost:3000")
-				.AllowAnyMethod()    
+				.SetIsOriginAllowed(_ => true) // Tüm kaynaklara izin ver
+				.AllowAnyMethod()
 				.AllowAnyHeader()
-				.AllowCredentials();
+				.AllowCredentials(); // SignalR için gerekli
 		});
 });
 
@@ -64,15 +69,21 @@ builder.Services
 	}); var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseAuthentication();
-app.UseHttpsRedirection();
+app.UseRouting();
 
 // CORS middleware'ini etkinleştir
-app.UseCors("AllowAll");
+app.UseCors("SignalRPolicy");
 
+// Kimlik doğrulama ve yetkilendirme middleware'lerini ekle
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseSwaggerServices();
 app.MapControllers();
+
+// SignalR hub'ını yapılandır
+app.MapHub<NotificationHub>("/notificationHub");
+
 app.UseGlobalExceptionHandling();
 app.UseLogUserContext();
 using (var scope = app.Services.CreateScope())

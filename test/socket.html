@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SignalR Notification Hub Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #connectionStatus {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #messageLog {
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid #ddd;
+            padding: 10px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>SignalR Notification Hub Test</h1>
+
+    <div>
+        <label for="token">JWT Token:</label>
+        <input type="text" id="token" placeholder="Enter JWT Token" style="width: 300px;">
+    </div>
+
+    <div>
+        <button id="connectBtn">Connect to Hub</button>
+        <button id="disconnectBtn" disabled>Disconnect from Hub</button>
+    </div>
+
+    <div id="connectionStatus">Status: Not Connected</div>
+
+    <div id="messageLog">
+        <h3>Message Log:</h3>
+        <div id="logMessages"></div>
+    </div>
+
+    <script>
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const logMessages = document.getElementById('logMessages');
+        let connection;
+
+        function log(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logMessages.prepend(logEntry);
+        }
+
+        function createConnection() {
+            const token = document.getElementById('token').value;
+            if (!token) {
+                log('Error: JWT Token is required');
+                return null;
+            }
+            
+            log(`Creating connection with token: ${token.substring(0, 10)}...`);
+            
+            // URL'e token ekleyerek bağlantı kur
+            return new signalR.HubConnectionBuilder()
+                .withUrl(`https://localhost:7267/notificationHub?access_token=${token}`)
+                .configureLogging(signalR.LogLevel.Debug)
+                .withAutomaticReconnect()
+                .build();
+        }
+
+        connectBtn.addEventListener('click', async () => {
+            try {
+                connection = createConnection();
+                if (!connection) return;
+                
+                // Bağlantı başarısız olduğunda
+                connection.onclose(error => {
+                    log(`Connection closed${error ? ': ' + error : ''}`);
+                    connectionStatus.textContent = 'Status: Connection Closed';
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                });
+                
+                // Mesaj alma olayını dinle
+                connection.on("ReceiveMessage", (message) => {
+                    log(`Received message: ${message}`);
+                });
+                
+                // Bağlantıyı başlat
+                await connection.start();
+                log('Connection established');
+                connectionStatus.textContent = 'Status: Connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                
+                // Test mesajı gönder
+                try {
+                    await connection.invoke("SendMessageTest", "Test message from client");
+                    log("Test message sent");
+                } catch (err) {
+                    log(`Error sending test message: ${err}`);
+                }
+            } catch (err) {
+                log(`Connection error: ${err}`);
+                connectionStatus.textContent = 'Status: Connection Failed';
+            }
+        });
+
+        disconnectBtn.addEventListener('click', async () => {
+            try {
+                if (connection) {
+                    await connection.stop();
+                    log('Disconnected from hub');
+                    connectionStatus.textContent = 'Status: Disconnected';
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                }
+            } catch (err) {
+                log(`Disconnection error: ${err}`);
+            }
+        });
+    </script>
+</body>
+</html>

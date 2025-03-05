@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Erp.Infrastructure.Configurations;
 
@@ -34,6 +35,31 @@ public static class AuthenticationExtensions
 					ValidAudience = configuration["Jwt:Audience"],
 					IssuerSigningKey = new SymmetricSecurityKey(
 						Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]))
+				};
+				
+				// SignalR için JWT yapılandırması
+				options.Events = new JwtBearerEvents
+				{
+					OnMessageReceived = context =>
+					{
+						// URL'den token'ı al
+						var accessToken = context.Request.Query["access_token"];
+						
+						// Header'dan token'ı al (eğer URL'de yoksa)
+						if (string.IsNullOrEmpty(accessToken))
+						{
+							accessToken = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+						}
+						
+						// Path'i kontrol et
+						var path = context.HttpContext.Request.Path;
+						if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+						{
+							// Token'ı ayarla
+							context.Token = accessToken;
+						}
+						return Task.CompletedTask;
+					}
 				};
 			});
 
