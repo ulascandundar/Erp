@@ -29,6 +29,9 @@ public class ErpDbContext : DbContext
 	public DbSet<Category> Categories { get; set; }
 	public DbSet<ProductCategory> ProductCategories { get; set; }
 	public DbSet<Order> Orders { get; set; }
+	public DbSet<OrderItem> OrderItem { get; set; }
+	public DbSet<OrderPayment> OrderPayment { get; set; }
+	public DbSet<Discount> Discount { get; set; }
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{

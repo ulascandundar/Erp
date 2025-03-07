@@ -32,6 +32,7 @@ public static class ServiceRegister
 		services.AddScoped<ICategoryService, CategoryService>();
 		services.AddScoped<IPlaceOrderService, PlaceOrderService>();
 		services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
+		services.AddScoped<IOrderReportService, OrderReportService>();
 		return services;
 	}
 }

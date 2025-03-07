@@ -44,7 +44,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCaching();
 builder.Services.AddCachedService<IUserService, UserService>();
 builder.Services.RegisterNotificationFactory();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 // Socket servislerini kaydet
 builder.Services.RegisterSocketServices();
 

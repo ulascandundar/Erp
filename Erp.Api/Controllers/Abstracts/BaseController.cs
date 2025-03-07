@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
+using Erp.Domain.Attributes;
 using Erp.Domain.Models;
-using Erp.Infrastructure.Attributes.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Reflection;
