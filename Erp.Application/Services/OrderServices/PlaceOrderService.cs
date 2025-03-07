@@ -94,15 +94,12 @@ public class PlaceOrderService : IPlaceOrderService
             // Calculate expected price based on product price and quantity
             decimal expectedPrice = product.Price * orderItem.Quantity;
             
-            // Apply discount if any
-            decimal discountedPrice = expectedPrice - orderItem.DiscountAmount;
-            
             // Check if the price matches (with a small tolerance for floating point errors)
-            if (Math.Abs(discountedPrice - orderItem.TotalAmount) > 0.01m)
+            if (Math.Abs(expectedPrice - orderItem.TotalAmount) > 0.01m)
             {
                 throw new BadRequestException(string.Format(
                     "Ürün fiyatı uyuşmazlığı: {0}. Beklenen: {1}, Gönderilen: {2}",
-                    product.Name, discountedPrice, orderItem.TotalAmount));
+                    product.Name, expectedPrice, orderItem.TotalAmount));
             }
 
             // Add to expected total
@@ -111,7 +108,6 @@ public class PlaceOrderService : IPlaceOrderService
 
         // Calculate total payments (excluding discounts which are already applied to order items)
         decimal totalPayments = placeOrderDto.Payments
-            .Where(p => p.PaymentMethod != Domain.Enums.PaymentMethods.Discount)
             .Sum(p => p.Amount);
 
         // Check if payments are sufficient
