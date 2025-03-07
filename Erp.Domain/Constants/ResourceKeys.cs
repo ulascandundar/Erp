@@ -28,6 +28,7 @@ namespace Erp.Domain.Constants
             public const string EmailAlreadyExists = "EmailAlreadyExists";
             public const string PhoneNumberAlreadyExists = "PhoneNumberAlreadyExists";
             public const string TaxNumberAlreadyExists = "TaxNumberAlreadyExists";
+            public const string OrderPlacementError = "OrderPlacementError";
         }
 
         // Validation messages
@@ -69,6 +70,16 @@ namespace Erp.Domain.Constants
             public const string CompanyTaxNumberMaxLength = "CompanyTaxNumberMaxLength";
             public const string CompanyAddressMaxLength = "CompanyAddressMaxLength";
             public const string CompanyPhoneNumberMaxLength = "CompanyPhoneNumberMaxLength";
+            
+            // Order validation
+            public const string OrderItemsRequired = "OrderItemsRequired";
+            public const string PaymentsRequired = "PaymentsRequired";
+            public const string ProductRequired = "ProductRequired";
+            public const string QuantityGreaterThanZero = "QuantityGreaterThanZero";
+            public const string TotalAmountNotNegative = "TotalAmountNotNegative";
+            public const string PaymentAmountGreaterThanZero = "PaymentAmountGreaterThanZero";
+            public const string PaymentMethodRequired = "PaymentMethodRequired";
+            public const string InvalidPaymentMethod = "InvalidPaymentMethod";
             
             // Additional validation
             public const string RolesRequired = "RolesRequired";

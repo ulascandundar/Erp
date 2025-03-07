@@ -83,6 +83,9 @@
   <data name="TaxNumberAlreadyExists" xml:space="preserve">
     <value>Bu vergi numarası zaten kullanılmaktadır</value>
   </data>
+  <data name="OrderPlacementError" xml:space="preserve">
+    <value>Sipariş oluşturulurken bir hata oluştu</value>
+  </data>
   
   <!-- Validation Messages -->
   <data name="RequiredField" xml:space="preserve">
@@ -99,6 +102,32 @@
   </data>
   <data name="InvalidTaxNumber" xml:space="preserve">
     <value>Geçersiz vergi numarası</value>
+  </data>
+  
+  <!-- Order Validation Messages -->
+  <data name="OrderItemsRequired" xml:space="preserve">
+    <value>Siparişte en az bir ürün olmalıdır</value>
+  </data>
+  <data name="PaymentsRequired" xml:space="preserve">
+    <value>Siparişte en az bir ödeme olmalıdır</value>
+  </data>
+  <data name="ProductRequired" xml:space="preserve">
+    <value>Ürün seçimi zorunludur</value>
+  </data>
+  <data name="QuantityGreaterThanZero" xml:space="preserve">
+    <value>Miktar sıfırdan büyük olmalıdır</value>
+  </data>
+  <data name="TotalAmountNotNegative" xml:space="preserve">
+    <value>Toplam tutar negatif olamaz</value>
+  </data>
+  <data name="PaymentAmountGreaterThanZero" xml:space="preserve">
+    <value>Ödeme tutarı sıfırdan büyük olmalıdır</value>
+  </data>
+  <data name="PaymentMethodRequired" xml:space="preserve">
+    <value>Ödeme yöntemi seçimi zorunludur</value>
+  </data>
+  <data name="InvalidPaymentMethod" xml:space="preserve">
+    <value>Geçersiz ödeme yöntemi</value>
   </data>
   
   <!-- Success Messages -->

@@ -4,11 +4,15 @@ using Erp.Application.Services.CategoryServices;
 using Erp.Application.Services.CompanyServices;
 using Erp.Application.Services.LocalizationServices;
 using Erp.Application.Services.NotificationServices;
+using Erp.Application.Services.OrderServices;
 using Erp.Application.Services.ProductServices;
 using Erp.Application.Services.UserServices;
 using Erp.Application.Validators.CategoryValidator;
+using Erp.Application.Validators.OrderValidator;
 using Erp.Application.Validators.ProductValidator;
+using Erp.Domain.DTOs.Order;
 using Erp.Domain.Interfaces.BusinessServices;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Erp.Application.Configurations;
@@ -26,6 +30,7 @@ public static class ServiceRegister
 		services.AddScoped<ICompanyService, CompanyService>();
 		services.AddScoped<IProductService, ProductService>();
 		services.AddScoped<ICategoryService, CategoryService>();
+		services.AddScoped<IPlaceOrderService, PlaceOrderService>();
 		services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
 		return services;
 	}
