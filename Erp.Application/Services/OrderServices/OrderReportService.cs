@@ -6,6 +6,7 @@ using AutoMapper;
 using Erp.Application.Common.Extensions;
 using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
+using Erp.Domain.DTOs.Order;
 using Erp.Domain.DTOs.Order.Report;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.Product;
@@ -120,5 +121,42 @@ public class OrderReportService : IOrderReportService
 		entityResult = entityResult.OrderByDescending(x => x.CreatedAt).ToList();
 		var dtos = _mapper.Map<List<OrderHistoryExcelDto>>(entityResult);
 		return dtos;
+	}
+
+	public async Task<CumulativeOrderProductGroupDto> GetCumulativeOrderWithProductGroupReportAsync(CumulativeOrderReportRequestDto request)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var query = _db.OrderItem.AsQueryable();
+		query = query.Where(x => x.CreatedAt.Date >= request.StartDate.Date && !x.IsDeleted &&
+		 x.CreatedAt.Date <= request.EndDate.Date && x.Order.CompanyId == currentUser.CompanyId && !x.Order.IsDeleted);
+		var groupQuery = query.GroupBy(x => new { x.ProductId, ProductName = x.Product.Name });
+		var report = new CumulativeOrderProductGroupDto();
+		var productGroups = await groupQuery.Select(x => new CumulativeOrderProductGroup()
+		{
+			ProductId = x.Key.ProductId,
+			ProductName = x.Key.ProductName,
+			TotalAmount = x.Sum(y => y.TotalAmount),
+            TotalQuantityCount = x.Sum(y => y.Quantity)
+		}).ToListAsync();
+		report.ProductGroups = productGroups;
+		report.TotalAmount = productGroups.Sum(x => x.TotalAmount);
+		report.TotalQuantityCount = productGroups.Sum(x => x.TotalQuantityCount);
+		return report;
+	}
+
+	public async Task<OrderDto> GetOrderDetail(Guid id)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var order = await _db.Orders
+			.Include(x => x.OrderItems)
+			.ThenInclude(x => x.Product)
+			.Include(x => x.OrderPayments)
+			.FirstOrDefaultAsync(x => x.Id == id && x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
+		if (order == null)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.ProductNotFound));
+		}
+		var dto = _mapper.Map<OrderDto>(order);
+		return dto;
 	}
 }

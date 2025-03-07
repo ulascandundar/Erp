@@ -19,14 +19,14 @@ public class OrderReportController : BaseV1Controller
 	public async Task<IActionResult> GetCumulativeOrderReport([FromQuery] CumulativeOrderReportRequestDto request)
 	{
 		var report = await _orderReportService.GetCumulativeOrderReportAsync(request);
-		return Ok(report);
+		return CustomResponse(report);
 	}
 
 	[HttpGet("history")]
 	public async Task<IActionResult> GetPaged([FromQuery] PaginationRequest request)
 	{
 		var report = await _orderReportService.GetPagedAsync(request);
-		return Ok(report);
+		return CustomResponse(report);
 	}
 
 	[HttpGet("history-excel")]
@@ -34,5 +34,19 @@ public class OrderReportController : BaseV1Controller
 	{
 		var result = await _orderReportService.GetAllOrdersForExcel(request);
 		return ExportToExcel(result, "OrderHistory");
+	}
+
+	[HttpGet("product-group")]
+	public async Task<IActionResult> GetCumulativeOrderWithProductGroupReport([FromQuery] CumulativeOrderReportRequestDto request)
+	{
+		var report = await _orderReportService.GetCumulativeOrderWithProductGroupReportAsync(request);
+		return CustomResponse(report);
+	}
+
+	[HttpGet("{id}")]
+	public async Task<IActionResult> GetDetail(Guid id)
+	{
+		var result = await _orderReportService.GetOrderDetail(id);
+		return CustomResponse(result);
 	}
 }
