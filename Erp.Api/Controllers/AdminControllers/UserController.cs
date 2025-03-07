@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Erp.Api.Controllers.AdminControllers;
-[Authorize(Roles = Roles.Admin)]
+[Authorize(Roles = $"{Roles.Admin},{Roles.CompanyAdmin}")]
 public class UserController : BaseV1Controller
 {
 	private readonly IUserService _userService;
@@ -17,6 +17,7 @@ public class UserController : BaseV1Controller
 		_userService = userService;
 	}
 
+	[Authorize(Roles = Roles.Admin)]
 	[HttpGet]
 	public async Task<IActionResult> GetAll()
 	{
@@ -51,7 +52,7 @@ public class UserController : BaseV1Controller
 		var result = await _userService.UpdateUserAsync(userUpdateDto, id);
 		return CustomResponse(result);
 	}
-
+	[Authorize(Roles = Roles.Admin)]
 	[HttpPut("change-password/{id}")]
 	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordUserDto changePasswordUserDto, Guid id)
 	{

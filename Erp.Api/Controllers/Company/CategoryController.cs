@@ -32,7 +32,14 @@ public class CategoryController : BaseV1Controller
         return CustomResponse(result);
     }
 
-    [HttpDelete("{id}")]
+	[HttpGet("{id}/with-products")]
+	public async Task<IActionResult> GetWithProductsById(Guid id)
+	{
+		var result = await _categoryService.GetCategoryWithProductsByIdAsync(id);
+		return CustomResponse(result);
+	}
+
+	[HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _categoryService.SoftDeleteCategoryAsync(id);

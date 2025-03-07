@@ -15,4 +15,5 @@ public interface ICategoryService
     Task HardDeleteCategoryAsync(Guid id);
     Task SoftDeleteCategoryAsync(Guid id);
     Task<CustomPagedResult<CategoryDto>> GetPagedAsync(PaginationRequest paginationRequest);
+    Task<CategoryWithProductsDto> GetCategoryWithProductsByIdAsync(Guid id);
 } 

@@ -45,10 +45,16 @@ public class UserService : IUserService
 
 	public async Task<UserDto> CreateUserAsync(UserCreateDto userCreateDto)
 	{
+		var currentUser = _currentUserService.GetCurrentUser();
 		var userExists = _db.Users.Any(x => x.Email == userCreateDto.Email);
 		if (userExists)
 		{
 			throw new UserEmailAlreadyExistsException();
+		}
+		if (!currentUser.Roles.Contains(Roles.Admin))
+		{
+			userCreateDto.Roles = new List<string> { Roles.CompanyAdmin };
+			userCreateDto.CompanyId = currentUser.CompanyId;
 		}
 		var user = _mapper.Map<User>(userCreateDto);
 		user.PasswordHash = _passwordHasher.HashPassword(user, userCreateDto.Password);
@@ -145,10 +151,15 @@ public class UserService : IUserService
 
 	public async Task<CustomPagedResult<UserDto>> GedPagedAsync(PaginationRequest paginationRequest)
 	{
+		var currentUser = _currentUserService.GetCurrentUser();
 		var query = _db.Users.Where(x => x.IsDeleted == false).AsQueryable();
 		if (!string.IsNullOrEmpty(paginationRequest.Search))
 		{
 			query = query.Where(x => x.Email.Contains(paginationRequest.Search));
+		}
+		if (!currentUser.Roles.Contains(Roles.Admin))
+		{
+			query = query.Where(x => x.CompanyId == currentUser.CompanyId);
 		}
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
 		var dtos = _mapper.Map<List<UserDto>>(entityResult.Items);

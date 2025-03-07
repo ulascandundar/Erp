@@ -91,7 +91,7 @@ public class CategoryService : ICategoryService
             throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
         }
 
-        var category = await _db.Categories.FirstOrDefaultAsync(
+        var category = await _db.Categories.Include(o=>o.ProductCategories).ThenInclude(o=>o.Product).FirstOrDefaultAsync(
             x => x.Id == id && 
             x.CompanyId == currentUser.CompanyId.Value && 
             !x.IsDeleted);
@@ -101,10 +101,34 @@ public class CategoryService : ICategoryService
             throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
         }
         
-        return _mapper.Map<CategoryDto>(category);
+        var result = _mapper.Map<CategoryDto>(category);
+		return result;
     }
 
-    public async Task HardDeleteCategoryAsync(Guid id)
+	public async Task<CategoryWithProductsDto> GetCategoryWithProductsByIdAsync(Guid id)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+
+		if (!currentUser.CompanyId.HasValue)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
+		}
+
+		var category = await _db.Categories.Include(o => o.ProductCategories).ThenInclude(o => o.Product).FirstOrDefaultAsync(
+			x => x.Id == id &&
+			x.CompanyId == currentUser.CompanyId.Value &&
+			!x.IsDeleted);
+
+		if (category == null)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.CategoryNotFound));
+		}
+
+		var result = _mapper.Map<CategoryWithProductsDto>(category);
+		return result;
+	}
+
+	public async Task HardDeleteCategoryAsync(Guid id)
     {
         var currentUser = _currentUserService.GetCurrentUser();
         

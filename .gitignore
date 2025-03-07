@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Erp.Api/Properties/ServiceDependencies/erptestulasc - Zip Deploy

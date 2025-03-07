@@ -11,5 +11,7 @@ public class CategoryMappingProfile : Profile
         CreateMap<Category, CategoryDto>();
         CreateMap<CategoryCreateDto, Category>();
         CreateMap<CategoryUpdateDto, Category>();
-    }
+        CreateMap<Category, CategoryWithProductsDto>()
+            .ForMember(o=> o.Products, o => o.MapFrom(o => o.ProductCategories.Select(o=>o.Product)));
+	}
 } 

@@ -99,12 +99,6 @@ builder.Services.AddSingleton<SharedResource>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
 
 // Use localization middleware
 app.UseRequestLocalization();
