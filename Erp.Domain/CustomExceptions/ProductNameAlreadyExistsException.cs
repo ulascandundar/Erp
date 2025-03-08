@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class ProductNameAlreadyExistsException : NonLoggableException
 {
-	override public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public static string message = "Bu ürün adı zaten kayıtlı.";
 	public ProductNameAlreadyExistsException() : base(message)
 	{

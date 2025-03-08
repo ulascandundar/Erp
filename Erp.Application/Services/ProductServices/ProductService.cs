@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace Erp.Application.Services.ProductServices;
@@ -254,6 +255,10 @@ public class ProductService : IProductService
 				x.Barcode.Contains(paginationRequest.Search));
 		}
 		query = query.Include(x => x.ProductCategories).ThenInclude(o=>o.Category);
+		if (!string.IsNullOrEmpty(paginationRequest.Query))
+		{
+			query = query.Where(paginationRequest.Query);
+		}
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
 		var dtos = _mapper.Map<List<ProductDto>>(entityResult.Items);
 

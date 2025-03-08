@@ -33,6 +33,8 @@ public class ErpDbContext : DbContext
 	public DbSet<OrderItem> OrderItem { get; set; }
 	public DbSet<OrderPayment> OrderPayment { get; set; }
 	public DbSet<Discount> Discount { get; set; }
+	public DbSet<Unit> Units { get; set; }
+	public DbSet<RawMaterial> RawMaterials { get; set; }
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{

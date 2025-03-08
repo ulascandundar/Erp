@@ -14,6 +14,7 @@ using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace Erp.Application.Services.OrderServices;
 
@@ -83,7 +84,10 @@ public class OrderReportService : IOrderReportService
 			request.OrderBy = "CreatedAt";
 			request.IsDesc = true;
 		}
-
+		if (!string.IsNullOrEmpty(request.Query))
+		{
+			query = query.Where(request.Query);
+		}
 		var entityResult = await query.ToPagedResultAsync(request);
 		var dtos = _mapper.Map<List<OrderHistoryDto>>(entityResult.Items);
 		return new CustomPagedResult<OrderHistoryDto>

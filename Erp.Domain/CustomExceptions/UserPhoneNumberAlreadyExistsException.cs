@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class UserPhoneNumberAlreadyExistsException : NonLoggableException
 {
-	override public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK; 
 	public static string message = "Bu telefon numarası zaten kayıtlı.";
 	public UserPhoneNumberAlreadyExistsException() : base(message)
 	{

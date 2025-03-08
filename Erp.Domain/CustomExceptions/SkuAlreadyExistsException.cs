@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class SkuAlreadyExistsException : NonLoggableException
 {
-	override public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public static string message = "Bu sku zaten kayıtlı.";
 	public SkuAlreadyExistsException() : base(message)
 	{

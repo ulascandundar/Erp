@@ -13,6 +13,7 @@ public class PaginationRequest
 	public bool IsDesc { get; set; }
 	public string OrderBy { get; set; }
 	public string Search { get; set; }
+	public string Query { get; set; }
 	public DateTime? StartDate { get; set; }
 	public DateTime? EndDate { get; set; }
 }

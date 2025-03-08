@@ -163,6 +163,10 @@ public class UserService : IUserService
 		{
 			query = query.Where(x => x.CompanyId == currentUser.CompanyId);
 		}
+		if (!string.IsNullOrEmpty(paginationRequest.Query))
+		{
+			query = query.Where(paginationRequest.Query);
+		}
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
 		var dtos = _mapper.Map<List<UserDto>>(entityResult.Items);
 		var result = new CustomPagedResult<UserDto>

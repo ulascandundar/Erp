@@ -10,8 +10,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class UserEmailAlreadyExistsException : NonLoggableException
 {
-	public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
-	
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public UserEmailAlreadyExistsException() 
 		: base(ResourceKeys.Errors.EmailAlreadyExists) { }
 }

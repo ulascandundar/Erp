@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class ProductBarcodeAlreadyExistsException : NonLoggableException
 {
-	override public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public static string message = "Bu ürün barkodu zaten kayıtlı.";
 	public ProductBarcodeAlreadyExistsException() : base(message)
 	{

@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace Erp.Application.Services.CategoryServices;
@@ -235,8 +236,11 @@ public class CategoryService : ICategoryService
                 x.Name.Contains(paginationRequest.Search) || 
                 (x.Description != null && x.Description.Contains(paginationRequest.Search)));
         }
-
-        var entityResult = await query.ToPagedResultAsync(paginationRequest);
+		if (!string.IsNullOrEmpty(paginationRequest.Query))
+		{
+			query = query.Where(paginationRequest.Query);
+		}
+		var entityResult = await query.ToPagedResultAsync(paginationRequest);
         var dtos = _mapper.Map<List<CategoryDto>>(entityResult.Items);
         
         return new CustomPagedResult<CategoryDto>

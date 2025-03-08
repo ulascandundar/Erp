@@ -10,8 +10,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class UserAuthException : NonLoggableException
 {
-	public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
-	
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public UserAuthException() 
 		: base(ResourceKeys.Errors.InvalidCredentials) { }
 		

@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class CompanyTaxNumberAlreadyExistException : NonLoggableException
 {
-	override public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public static string message = "Bu vergi numarası zaten kayıtlı.";
 	public CompanyTaxNumberAlreadyExistException() : base(message)
 	{

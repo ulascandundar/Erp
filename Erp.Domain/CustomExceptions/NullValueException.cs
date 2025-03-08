@@ -9,5 +9,6 @@ namespace Erp.Domain.CustomExceptions;
 
 public class NullValueException : NonLoggableException
 {
+	override public HttpStatusCode StatusCode => HttpStatusCode.OK;
 	public NullValueException(string message) : base(message) { }
 }
