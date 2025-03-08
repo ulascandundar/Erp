@@ -1,5 +1,6 @@
 ﻿using Erp.Domain.Entities;
 using Erp.Domain.Entities.NoSqlEntities;
+using Erp.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -35,7 +36,7 @@ public class ErpDbContext : DbContext
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{
-		var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		var userId = _httpContextAccessor.HttpContext?.User.FindFirst(CustomClaims.Id)?.Value;
 		Guid? userGuid = null;
 		if (!string.IsNullOrEmpty(userId))
 		{

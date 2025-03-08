@@ -122,14 +122,12 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 200, // 2 * 100
-                        DiscountAmount = 0
                     },
                     new PlaceOrderItemDto
                     {
                         ProductId = _productId2,
                         Quantity = 1,
                         TotalAmount = 200, // 1 * 200
-                        DiscountAmount = 0
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -182,14 +180,12 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 150, // Yanlış fiyat (doğrusu 200 olmalı)
-                        DiscountAmount = 0
                     },
                     new PlaceOrderItemDto
                     {
                         ProductId = _productId2,
                         Quantity = 1,
                         TotalAmount = 150, // Yanlış fiyat (doğrusu 200 olmalı)
-                        DiscountAmount = 0
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -242,7 +238,6 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 150, // Yanlış fiyat (doğrusu 200 olmalı)
-                        DiscountAmount = 0
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -287,14 +282,12 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 200, // Doğru fiyat
-                        DiscountAmount = 0
                     },
                     new PlaceOrderItemDto
                     {
                         ProductId = _productId2,
                         Quantity = 1,
                         TotalAmount = 200, // Doğru fiyat
-                        DiscountAmount = 0
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -345,8 +338,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                     {
                         ProductId = _productId1,
                         Quantity = 1,
-                        TotalAmount = 100,
-                        DiscountAmount = 0
+                        TotalAmount = 100
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -388,14 +380,12 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 180, // 200 - 20 indirim
-                        DiscountAmount = 20
                     },
                     new PlaceOrderItemDto
                     {
                         ProductId = _productId2,
                         Quantity = 1,
                         TotalAmount = 180, // 200 - 20 indirim
-                        DiscountAmount = 20
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>

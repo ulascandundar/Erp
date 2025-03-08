@@ -10,6 +10,5 @@ public class PlaceOrderItemDto
     public Guid ProductId { get; set; }
     public decimal Quantity { get; set; }
     public decimal TotalAmount { get; set; }
-    public decimal DiscountAmount { get; set; }
 
 }

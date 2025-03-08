@@ -1,4 +1,5 @@
 ﻿using Erp.Domain.Entities;
+using Erp.Domain.Enums;
 using Erp.Domain.Interfaces.Jwt;
 using Erp.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +31,8 @@ public static class AuthenticationExtensions
 				{
 					ValidateIssuer = true,
 					ValidateAudience = true,
+					RoleClaimType = ClaimTypes.Role,
+					NameClaimType = CustomClaims.Id,
 					ValidateLifetime = true,
 					ValidateIssuerSigningKey = true,
 					ValidIssuer = configuration["Jwt:Issuer"],

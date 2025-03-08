@@ -6,7 +6,7 @@ using Erp.Domain.Interfaces.BusinessServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erp.Api.Controllers.Company;
+namespace Erp.Api.Controllers.CategoryControllers;
 
 [Authorize(Roles = Roles.CompanyAdmin)]
 public class CategoryController : BaseV1Controller
@@ -32,7 +32,7 @@ public class CategoryController : BaseV1Controller
         return CustomResponse(result);
     }
 
-	[HttpGet("{id}/with-products")]
+	[HttpGet("{id}/withProducts")]
 	public async Task<IActionResult> GetWithProductsById(Guid id)
 	{
 		var result = await _categoryService.GetCategoryWithProductsByIdAsync(id);

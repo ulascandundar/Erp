@@ -29,14 +29,14 @@ public class OrderReportController : BaseV1Controller
 		return CustomResponse(report);
 	}
 
-	[HttpGet("history-excel")]
+	[HttpGet("historyExcel")]
 	public async Task<IActionResult> HistoryExcel([FromQuery] PaginationRequest request)
 	{
 		var result = await _orderReportService.GetAllOrdersForExcel(request);
 		return ExportToExcel(result, "OrderHistory");
 	}
 
-	[HttpGet("product-group")]
+	[HttpGet("productGroup")]
 	public async Task<IActionResult> GetCumulativeOrderWithProductGroupReport([FromQuery] CumulativeOrderReportRequestDto request)
 	{
 		var report = await _orderReportService.GetCumulativeOrderWithProductGroupReportAsync(request);

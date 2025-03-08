@@ -1,3 +1,4 @@
+using Erp.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -12,7 +13,7 @@ public class NotificationHub : Hub
     public override async Task OnConnectedAsync()
     {
         // Kullanıcı bağlandığında çalışacak kod
-        var userId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = Context.User.FindFirst(CustomClaims.Id)?.Value;
         Console.WriteLine($"Bağlantı kuruldu. Kullanıcı ID: {userId ?? "Bulunamadı"}");
         
         if (!string.IsNullOrEmpty(userId))
@@ -21,13 +22,13 @@ public class NotificationHub : Hub
             await Groups.AddToGroupAsync(Context.ConnectionId, userId);
             
             // Kullanıcının rolüne göre gruplara ekleyebiliriz
-            if (Context.User.IsInRole("CompanyAdmin"))
+            if (Context.User.IsInRole(CustomClaims.CompanyId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, "CompanyAdmins");
             }
             
             // Kullanıcının şirket ID'sine göre gruba ekle
-            var companyIdClaim = Context.User.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = Context.User.FindFirst(CustomClaims.CompanyId)?.Value;
             if (!string.IsNullOrEmpty(companyIdClaim) && Guid.TryParse(companyIdClaim, out Guid companyId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, companyId.ToString());
@@ -40,17 +41,17 @@ public class NotificationHub : Hub
     public override async Task OnDisconnectedAsync(Exception exception)
     {
         // Kullanıcı bağlantısı kesildiğinde çalışacak kod
-        var userId = Context.User.FindFirst("sub")?.Value;
+        var userId = Context.User.FindFirst(CustomClaims.Id)?.Value;
         if (!string.IsNullOrEmpty(userId))
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
             
-            if (Context.User.IsInRole("CompanyAdmin"))
+            if (Context.User.IsInRole(CustomClaims.CompanyId))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, "CompanyAdmins");
             }
             // Kullanıcının şirket ID'sine göre gruptan çıkar
-            var companyIdClaim = Context.User.FindFirst("CompanyId")?.Value;
+            var companyIdClaim = Context.User.FindFirst(CustomClaims.Id)?.Value;
             if (!string.IsNullOrEmpty(companyIdClaim) && Guid.TryParse(companyIdClaim, out Guid companyId))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, companyId.ToString());
@@ -63,7 +64,7 @@ public class NotificationHub : Hub
     // Client'ların çağırabileceği metotlar
     public async Task SendMessageTest(string message)
     {
-        var userId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = Context.User.FindFirst(CustomClaims.Id)?.Value;
         // Client'lara mesaj gönder
         //await Clients.All.SendAsync("ReceiveMessage", userId, message);
     }

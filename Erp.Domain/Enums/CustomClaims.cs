@@ -8,5 +8,8 @@ namespace Erp.Domain.Enums;
 
 public static class CustomClaims
 {
-    public const string CompanyId = "CompanyId";
+    public const string CompanyId = "companyId";
+    public const string Id = "id";
+	public const string Email = "email";
+	public const string Role = "role";
 } 

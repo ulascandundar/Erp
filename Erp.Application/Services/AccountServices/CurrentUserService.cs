@@ -24,7 +24,7 @@ public class CurrentUserService : ICurrentUserService
 	public UserDto GetCurrentUser()
 	{
 		UserDto user = new UserDto();
-		user.Id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+		user.Id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(CustomClaims.Id).Value);
 		user.Email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email).Value;
 		user.Roles = _httpContextAccessor.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 		

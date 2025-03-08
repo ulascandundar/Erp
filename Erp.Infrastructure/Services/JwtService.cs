@@ -36,8 +36,8 @@ public class JwtService : IJwtService
 
 		var claims = new List<Claim>
 			{
-				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				new Claim(ClaimTypes.Email, user.Email),
+				new Claim(CustomClaims.Id, user.Id.ToString()),
+				new Claim(CustomClaims.Email, user.Email),
 			};
 
 		// Add CompanyId claim if available
@@ -49,7 +49,7 @@ public class JwtService : IJwtService
 		// Add roles
 		foreach (var role in user.Roles)
 		{
-			claims.Add(new Claim(ClaimTypes.Role, role));
+			claims.Add(new Claim(CustomClaims.Role, role));
 		}
 
 		var token = new JwtSecurityToken(
@@ -88,7 +88,9 @@ public class JwtService : IJwtService
 				ValidateAudience = true,
 				ValidAudience = _audience,
 				ValidateLifetime = true,
-				ClockSkew = TimeSpan.Zero
+				ClockSkew = TimeSpan.Zero,
+				NameClaimType = CustomClaims.Id,
+				RoleClaimType = CustomClaims.Role
 			}, out SecurityToken validatedToken);
 
 			return true;

@@ -1,4 +1,5 @@
 ﻿using Erp.Api.Controllers.Abstracts;
+using Erp.Application.Services.AccountServices;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.User;
 using Erp.Domain.Enums;
@@ -12,9 +13,11 @@ namespace Erp.Api.Controllers.AdminControllers;
 public class UserController : BaseV1Controller
 {
 	private readonly IUserService _userService;
-	public UserController(IUserService userService)
+	private readonly ICurrentUserService _currentUserService;
+	public UserController(IUserService userService, ICurrentUserService currentUserService)
 	{
 		_userService = userService;
+		_currentUserService = currentUserService;
 	}
 
 	[Authorize(Roles = Roles.Admin)]
@@ -53,7 +56,7 @@ public class UserController : BaseV1Controller
 		return CustomResponse(result);
 	}
 	[Authorize(Roles = Roles.Admin)]
-	[HttpPut("change-password/{id}")]
+	[HttpPut("changePassword/{id}")]
 	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordUserDto changePasswordUserDto, Guid id)
 	{
 		var result = await _userService.ChangePasswordUserAsync(changePasswordUserDto, id);
@@ -64,6 +67,13 @@ public class UserController : BaseV1Controller
 	public async Task<IActionResult> GetPaged([FromQuery] PaginationRequest paginationRequest)
 	{
 		var result = await _userService.GedPagedAsync(paginationRequest);
+		return CustomResponse(result);
+	}
+
+	[HttpGet("GetCurrentUser")]
+	public IActionResult GetCurrentUser()
+	{
+		var result = _currentUserService.GetCurrentUser();
 		return CustomResponse(result);
 	}
 
