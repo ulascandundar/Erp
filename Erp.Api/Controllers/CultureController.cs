@@ -19,7 +19,7 @@ public class CultureController : BaseV1Controller
     /// </summary>
     /// <param name="culture">Culture code (e.g., tr-TR, en-US)</param>
     /// <returns>Success message</returns>
-    [HttpGet("set-culture")]
+    [HttpGet("setCulture")]
     public IActionResult SetCulture(string culture)
     {
         if (string.IsNullOrEmpty(culture))
@@ -51,7 +51,7 @@ public class CultureController : BaseV1Controller
     /// Gets the current culture
     /// </summary>
     /// <returns>Current culture information</returns>
-    [HttpGet("get-culture")]
+    [HttpGet("getCulture")]
     public IActionResult GetCulture()
     {
         var culture = CultureInfo.CurrentCulture;

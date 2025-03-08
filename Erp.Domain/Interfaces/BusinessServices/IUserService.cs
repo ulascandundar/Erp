@@ -1,4 +1,5 @@
 ﻿using Erp.Domain.DTOs.Auth;
+using Erp.Domain.DTOs.Customer;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.User;
 using System;
@@ -24,4 +25,6 @@ public interface IUserService
 	Task<UserDto> ChangePasswordUserAsync(ChangePasswordUserDto changePasswordUserDto, Guid userId);
 	Task<UserDto> ChangeCurrentUserPasswordAsync(ChangePasswordUserDto changePasswordUserDto);
 	Task<CustomPagedResult<UserDto>> GedPagedAsync(PaginationRequest paginationRequest);
+	Task SetCustomer(CustomerDto customerDto);
+	Task<CustomerDto> GetCustomer();
 }

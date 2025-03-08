@@ -63,6 +63,16 @@ namespace Erp.Domain.Constants
             public const string UserPasswordMinLength = "UserPasswordMinLength";
             public const string UserPhoneNumberMaxLength = "UserPhoneNumberMaxLength";
             
+            // Customer validation
+            public const string TcknRequired = "TcknRequired";
+            public const string TcknLength = "TcknLength";
+            public const string FirstNameRequired = "FirstNameRequired";
+            public const string LastNameRequired = "LastNameRequired";
+            public const string PhoneNumberRequired = "PhoneNumberRequired";
+            public const string PhoneNumberLength = "PhoneNumberLength";
+            public const string AddressRequired = "AddressRequired";
+            public const string CityRequired = "CityRequired";
+            
             // Company validation
             public const string CompanyNameRequired = "CompanyNameRequired";
             public const string CompanyNameMaxLength = "CompanyNameMaxLength";
@@ -92,7 +102,6 @@ namespace Erp.Domain.Constants
             public const string PageSizeGreaterThanZero = "PageSizeGreaterThanZero";
             
             // Pending user validation
-            public const string TcknLength = "TcknLength";
             public const string FirstNameMaxLength = "FirstNameMaxLength";
             public const string LastNameMaxLength = "LastNameMaxLength";
             public const string CityMaxLength = "CityMaxLength";

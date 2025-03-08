@@ -37,7 +37,7 @@ public class AuthController : BaseV1Controller
 		return CustomResponse(result);
 	}
 
-	[HttpPut("ForgotPassword/resetPassword")]
+	[HttpPut("forgotPassword/resetPassword")]
 	public async Task<IActionResult> ResetPassword([FromBody] ForgotPasswordWithPasswordDto forgotPasswordWithPasswordDto)
 	{
 		await _forgotPasswordService.VerifyOtpAsync(forgotPasswordWithPasswordDto);

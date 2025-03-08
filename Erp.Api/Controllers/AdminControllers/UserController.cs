@@ -1,5 +1,6 @@
 ﻿using Erp.Api.Controllers.Abstracts;
 using Erp.Application.Services.AccountServices;
+using Erp.Domain.DTOs.Customer;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Domain.DTOs.User;
 using Erp.Domain.Enums;
@@ -70,10 +71,24 @@ public class UserController : BaseV1Controller
 		return CustomResponse(result);
 	}
 
-	[HttpGet("GetCurrentUser")]
+	[HttpGet("getCurrentUser")]
 	public IActionResult GetCurrentUser()
 	{
 		var result = _currentUserService.GetCurrentUser();
+		return CustomResponse(result);
+	}
+
+	[HttpPut("setCustomer")]
+	public async Task<IActionResult> SetCustomer([FromBody] CustomerDto customerDto)
+	{
+		await _userService.SetCustomer(customerDto);
+		return CustomResponse();
+	}
+
+	[HttpGet("getCustomer")]
+	public async Task<IActionResult> GetCustomer()
+	{
+		var result = await _userService.GetCustomer();
 		return CustomResponse(result);
 	}
 

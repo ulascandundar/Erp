@@ -104,6 +104,32 @@
     <value>Invalid tax number</value>
   </data>
   
+  <!-- Customer Validation Messages -->
+  <data name="TcknRequired" xml:space="preserve">
+    <value>Turkish ID Number is required</value>
+  </data>
+  <data name="TcknLength" xml:space="preserve">
+    <value>Turkish ID Number must be 11 digits</value>
+  </data>
+  <data name="FirstNameRequired" xml:space="preserve">
+    <value>First name is required</value>
+  </data>
+  <data name="LastNameRequired" xml:space="preserve">
+    <value>Last name is required</value>
+  </data>
+  <data name="PhoneNumberRequired" xml:space="preserve">
+    <value>Phone number is required</value>
+  </data>
+  <data name="PhoneNumberLength" xml:space="preserve">
+    <value>Phone number must be 10 digits</value>
+  </data>
+  <data name="AddressRequired" xml:space="preserve">
+    <value>Address is required</value>
+  </data>
+  <data name="CityRequired" xml:space="preserve">
+    <value>City is required</value>
+  </data>
+  
   <!-- Order Validation Messages -->
   <data name="OrderItemsRequired" xml:space="preserve">
     <value>Order must have at least one item</value>

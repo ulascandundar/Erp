@@ -18,6 +18,8 @@ using System.Linq.Dynamic.Core;
 using Erp.Domain.DTOs.Pagination;
 using Erp.Application.Common.Extensions;
 using Erp.Domain.Constants;
+using Erp.Domain.Entities.NoSqlEntities;
+using Erp.Domain.DTOs.Customer;
 
 namespace Erp.Application.Services.UserServices;
 
@@ -172,5 +174,23 @@ public class UserService : IUserService
 			PageSize = entityResult.PageSize
 		};
 		return result;
+	}
+
+	public async Task SetCustomer(CustomerDto customerDto)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == currentUser.Id);
+		var customer = _mapper.Map<Customer>(customerDto);
+		user.Customer = customer;
+		_db.Users.Update(user);
+		await _db.SaveChangesAsync();
+	}
+
+	public async Task<CustomerDto> GetCustomer()
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == currentUser.Id);
+		var customer = _mapper.Map<CustomerDto>(user.Customer);
+		return customer;
 	}
 }

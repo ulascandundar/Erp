@@ -104,6 +104,32 @@
     <value>Geçersiz vergi numarası</value>
   </data>
   
+  <!-- Customer Validation Messages -->
+  <data name="TcknRequired" xml:space="preserve">
+    <value>TC Kimlik Numarası zorunludur</value>
+  </data>
+  <data name="TcknLength" xml:space="preserve">
+    <value>TC Kimlik Numarası 11 haneli olmalıdır</value>
+  </data>
+  <data name="FirstNameRequired" xml:space="preserve">
+    <value>Ad alanı zorunludur</value>
+  </data>
+  <data name="LastNameRequired" xml:space="preserve">
+    <value>Soyad alanı zorunludur</value>
+  </data>
+  <data name="PhoneNumberRequired" xml:space="preserve">
+    <value>Telefon numarası zorunludur</value>
+  </data>
+  <data name="PhoneNumberLength" xml:space="preserve">
+    <value>Telefon numarası 10 haneli olmalıdır</value>
+  </data>
+  <data name="AddressRequired" xml:space="preserve">
+    <value>Adres alanı zorunludur</value>
+  </data>
+  <data name="CityRequired" xml:space="preserve">
+    <value>Şehir alanı zorunludur</value>
+  </data>
+  
   <!-- Order Validation Messages -->
   <data name="OrderItemsRequired" xml:space="preserve">
     <value>Siparişte en az bir ürün olmalıdır</value>
