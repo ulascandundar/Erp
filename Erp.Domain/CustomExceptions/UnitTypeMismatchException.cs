@@ -9,13 +9,13 @@ using Erp.Domain.Interfaces.BusinessServices;
 
 namespace Erp.Domain.CustomExceptions;
 
-public class UnitNameAlreadyExistsException : NonLoggableException
+public class UnitTypeMismatchException : NonLoggableException
 {
     public override HttpStatusCode StatusCode => HttpStatusCode.OK;
     
-    public UnitNameAlreadyExistsException(ILocalizationService localizationService) 
-        : base(localizationService.GetLocalizedString(ResourceKeys.Errors.UnitNameAlreadyExists)) { }
+    public UnitTypeMismatchException(ILocalizationService localizationService) 
+        : base(localizationService.GetLocalizedString(ResourceKeys.Errors.UnitTypeMismatch)) { }
         
-    public UnitNameAlreadyExistsException(string message) 
+    public UnitTypeMismatchException(string message) 
         : base(message) { }
 } 

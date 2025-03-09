@@ -46,7 +46,7 @@ public class UnitService : IUnitService
 			!x.IsDeleted);
 		if (nameExists)
 		{
-			throw new UnitNameAlreadyExistsException();
+			throw new UnitNameAlreadyExistsException(_localizationService);
 		}
 
 		var shortCodeExists = await _db.Units.AnyAsync(
@@ -56,7 +56,7 @@ public class UnitService : IUnitService
 
 		if (shortCodeExists)
 		{
-			throw new UnitShortCodeAlreadyExistsException();
+			throw new UnitShortCodeAlreadyExistsException(_localizationService);
 		}
 
 		var unit = _mapper.Map<Unit>(unitCreateDto);
@@ -88,7 +88,7 @@ public class UnitService : IUnitService
 			x.Id != id);
 		if (nameExists)
 		{
-			throw new UnitNameAlreadyExistsException();
+			throw new UnitNameAlreadyExistsException(_localizationService);
 		}
 		var shortCodeExists = await _db.Units.AnyAsync(
 			x => x.ShortCode.ToLower() == unitUpdateDto.ShortCode.ToLower() &&
@@ -97,7 +97,7 @@ public class UnitService : IUnitService
 			x.Id != id);
 		if (shortCodeExists)
 		{
-			throw new UnitShortCodeAlreadyExistsException();
+			throw new UnitShortCodeAlreadyExistsException(_localizationService);
 		}
 		var result = _mapper.Map(unitUpdateDto, unit);
 		var rootUnit = await _db.Units.FirstOrDefaultAsync(x => x.Id == unitUpdateDto.RootUnitId);
@@ -119,17 +119,17 @@ public class UnitService : IUnitService
 		var productRawMaterialExists = await _db.RawMaterials.AnyAsync(x => x.UnitId == id && !x.IsDeleted);
 		if (productRawMaterialExists)
 		{
-			throw new UnitHasProductRawMaterialException();
+			throw new UnitHasProductRawMaterialException(_localizationService);
 		}
 		var unitExists = await _db.Units.AnyAsync(x => x.RootUnitId == id && !x.IsDeleted);
 		if (unitExists)
 		{
-			throw new UnitHasChildUnitException();
+			throw new UnitHasChildUnitException(_localizationService);
 		}
 		var productFormulationExists = await _db.ProductFormulaItems.AnyAsync(x => x.UnitId == id && !x.IsDeleted && !x.ProductFormula.IsDeleted);
 		if (productFormulationExists)
 		{
-			throw new UnitHasProductFormulationException();
+			throw new UnitHasProductFormulationException(_localizationService);
 		}
 		unit.IsDeleted = true;
 		_db.Units.Update(unit);
@@ -235,7 +235,7 @@ public class UnitService : IUnitService
 		// Check if units are of the same type
 		if (sourceUnit.UnitType != targetUnit.UnitType)
 		{
-			throw new InvalidOperationException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UnitTypeMismatch));
+			throw new UnitTypeMismatchException(_localizationService);
 		}
 		
 		// Calculate conversion rates to root unit for both source and target
