@@ -35,8 +35,11 @@ namespace Erp.Domain.Constants
             public const string UnitHasProductRawMaterial = "UnitHasProductRawMaterial";
             public const string UnitHasChildUnit = "UnitHasChildUnit";
             public const string UnitHasProductFormulation = "UnitHasProductFormulation";
-            public const string RawMaterialNotFound = "RawMaterialNotFound";
             public const string UnitTypeMismatch = "UnitTypeMismatch";
+            public const string RawMaterialNotFound = "RawMaterialNotFound";
+            public const string RawMaterialNameAlreadyExists = "RawMaterialNameAlreadyExists";
+            public const string RawMaterialBarcodeAlreadyExists = "RawMaterialBarcodeAlreadyExists";
+            public const string RawMaterialExistInFormula = "RawMaterialExistInFormula";
         }
 
         // Validation messages

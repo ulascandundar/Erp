@@ -107,6 +107,15 @@
   <data name="RawMaterialNotFound" xml:space="preserve">
     <value>Hammadde bulunamadı</value>
   </data>
+  <data name="RawMaterialNameAlreadyExists" xml:space="preserve">
+    <value>Bu hammadde adı şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="RawMaterialBarcodeAlreadyExists" xml:space="preserve">
+    <value>Bu barkod şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="RawMaterialExistInFormula" xml:space="preserve">
+    <value>Bu hammadde, ürün formülasyonlarında kullanıldığı için silinemez</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Farklı birim türleri arasında dönüşüm yapılamaz</value>
   </data>

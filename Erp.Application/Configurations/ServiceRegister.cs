@@ -6,12 +6,14 @@ using Erp.Application.Services.LocalizationServices;
 using Erp.Application.Services.NotificationServices;
 using Erp.Application.Services.OrderServices;
 using Erp.Application.Services.ProductServices;
+using Erp.Application.Services.RawMaterialServices;
 using Erp.Application.Services.UnitServices;
 using Erp.Application.Services.UserServices;
 using Erp.Application.Validators.CategoryValidator;
 using Erp.Application.Validators.OrderValidator;
 using Erp.Application.Validators.ProductValidator;
 using Erp.Domain.DTOs.Order;
+using Erp.Domain.Interfaces;
 using Erp.Domain.Interfaces.BusinessServices;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,7 @@ public static class ServiceRegister
 		services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
 		services.AddScoped<IOrderReportService, OrderReportService>();
 		services.AddScoped<IUnitService, UnitService>();
+		services.AddScoped<IRawMaterialService, RawMaterialService>();
 		return services;
 	}
 }

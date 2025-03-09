@@ -107,6 +107,15 @@
   <data name="RawMaterialNotFound" xml:space="preserve">
     <value>Raw material not found</value>
   </data>
+  <data name="RawMaterialNameAlreadyExists" xml:space="preserve">
+    <value>This raw material name is already in use in your company</value>
+  </data>
+  <data name="RawMaterialBarcodeAlreadyExists" xml:space="preserve">
+    <value>This barcode is already in use in your company</value>
+  </data>
+  <data name="RawMaterialExistInFormula" xml:space="preserve">
+    <value>This raw material cannot be deleted because it is used in product formulations</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Cannot convert between different unit types</value>
   </data>

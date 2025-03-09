@@ -1,0 +1,154 @@
+﻿using AutoMapper;
+using Erp.Application.Common.Extensions;
+using Erp.Domain.Constants;
+using Erp.Domain.CustomExceptions;
+using Erp.Domain.DTOs.Pagination;
+using Erp.Domain.DTOs.RawMaterial;
+using Erp.Domain.Entities;
+using Erp.Domain.Interfaces;
+using Erp.Domain.Interfaces.BusinessServices;
+using Erp.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+
+
+namespace Erp.Application.Services.RawMaterialServices;
+
+public class RawMaterialService : IRawMaterialService
+{
+	private readonly ErpDbContext _db;
+	private readonly ICurrentUserService _currentUserService;
+	private readonly ILocalizationService _localizationService;
+	private readonly IMapper _mapper;
+	private readonly IUnitService _unitService;
+	public RawMaterialService(ErpDbContext context, ILocalizationService localizationService, ICurrentUserService currentUserService, IMapper mapper, IUnitService unitService)
+	{
+		_db = context;
+		_localizationService = localizationService;
+		_currentUserService = currentUserService;
+		_mapper = mapper;
+		_unitService = unitService;
+	}
+	public async Task<RawMaterialDto> CreateRawMaterialAsync(RawMaterialCreateDto rawMaterialCreateDto)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		if (!currentUser.CompanyId.HasValue)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.UserNotBelongToCompany));
+		}
+		var nameExists = await _db.RawMaterials.AnyAsync(
+			x => x.Name.ToLower() == rawMaterialCreateDto.Name.ToLower() &&
+			(x.CompanyId == currentUser.CompanyId.Value) &&
+			!x.IsDeleted);
+		if (nameExists)
+		{
+			throw new RawMaterialNameAlreadyExistsException(_localizationService);
+		}
+
+		var barcodeExists = await _db.RawMaterials.AnyAsync(
+			x => x.Barcode == rawMaterialCreateDto.Barcode &&
+			(x.CompanyId == currentUser.CompanyId.Value) &&
+			!x.IsDeleted);
+		if (barcodeExists)
+		{
+			throw new RawMaterialBarcodeAlreadyExistsException(_localizationService);
+		}
+		var rawMaterial = _mapper.Map<RawMaterial>(rawMaterialCreateDto);
+		rawMaterial.CompanyId = currentUser.CompanyId.Value;
+		await _db.RawMaterials.AddAsync(rawMaterial);
+		await _db.SaveChangesAsync();
+		return _mapper.Map<RawMaterialDto>(rawMaterial);
+	}
+
+	public async Task<RawMaterialDto> UpdateRawMaterialAsync(Guid id, RawMaterialUpdateDto rawMaterialUpdateDto)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var rawMaterial = await _db.RawMaterials.FirstOrDefaultAsync(x => x.Id == id && x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
+		if (rawMaterial == null)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.RawMaterialNotFound));
+		}
+		var nameExists = await _db.RawMaterials.AnyAsync(
+			x => x.Name.ToLower() == rawMaterialUpdateDto.Name.ToLower() &&
+			(x.CompanyId == currentUser.CompanyId.Value) &&
+			!x.IsDeleted &&
+			x.Id != id);
+		if (nameExists)
+		{
+			throw new RawMaterialNameAlreadyExistsException(_localizationService);
+		}
+		var barcodeExists = await _db.RawMaterials.AnyAsync(
+			x => x.Barcode == rawMaterialUpdateDto.Barcode &&
+			(x.CompanyId == currentUser.CompanyId.Value) &&
+			!x.IsDeleted &&
+			x.Id != id);
+		if (barcodeExists)
+		{
+			throw new RawMaterialBarcodeAlreadyExistsException(_localizationService);
+		}
+		rawMaterial.Barcode = rawMaterialUpdateDto.Barcode;
+		rawMaterial.Name = rawMaterialUpdateDto.Name;
+		rawMaterial.Description = rawMaterialUpdateDto.Description;
+		rawMaterial.Price = rawMaterialUpdateDto.Price;
+		var newRate = await _unitService.ConvertUnit(rawMaterialUpdateDto.UnitId, rawMaterial.Id);
+		rawMaterial.Stock = Math.Round(rawMaterial.Stock * newRate, 3);
+		rawMaterial.UnitId = rawMaterialUpdateDto.UnitId;
+		await _db.SaveChangesAsync();
+		return _mapper.Map<RawMaterialDto>(rawMaterial);
+	}
+
+	public async Task<RawMaterialDto> GetRawMaterialAsync(Guid id)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var rawMaterial = await _db.RawMaterials.FirstOrDefaultAsync(x => x.Id == id && x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
+		if (rawMaterial == null)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.RawMaterialNotFound));
+		}
+		return _mapper.Map<RawMaterialDto>(rawMaterial);
+	}
+
+	public async Task<CustomPagedResult<RawMaterialDto>> GetRawMaterialsAsync(PaginationRequest paginationRequest)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var query = _db.RawMaterials.Where(x => x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
+		if (!string.IsNullOrEmpty(paginationRequest.Query))
+		{
+			query = query.Where(paginationRequest.Query);
+		}
+		if (!string.IsNullOrEmpty(paginationRequest.Search))
+		{
+			query = query.Where(o => o.Name.ToLower().Contains(paginationRequest.Search.ToLower())
+				|| o.Barcode.ToLower().Contains(paginationRequest.Search.ToLower()));
+		}
+		var entityResult = await query.ToPagedResultAsync(paginationRequest);
+		var dtos = _mapper.Map<List<RawMaterialDto>>(entityResult.Items);
+		return new CustomPagedResult<RawMaterialDto>
+		{
+			Items = dtos,
+			TotalCount = entityResult.TotalCount,
+			TotalPages = entityResult.TotalPages,
+			PageNumber = entityResult.PageNumber,
+			PageSize = entityResult.PageSize
+		};
+	}
+
+	public async Task DeleteRawMaterialAsync(Guid id)
+	{
+		var currentUser = _currentUserService.GetCurrentUser();
+		var rawMaterial = await _db.RawMaterials.FirstOrDefaultAsync(x => x.Id == id && x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
+		if (rawMaterial == null)
+		{
+			throw new NullValueException(_localizationService.GetLocalizedString(ResourceKeys.Errors.RawMaterialNotFound));
+		}
+		var rawMaterialExistFormula = await _db.ProductFormulaItems
+		.Where(x => x.RawMaterialId == id && !x.IsDeleted && !x.ProductFormula.IsDeleted).AnyAsync();
+		if (rawMaterialExistFormula)
+		{
+			throw new RawMaterialExistInFormulaException(_localizationService);
+		}
+		rawMaterial.IsDeleted = true;
+		_db.RawMaterials.Update(rawMaterial);
+		await _db.SaveChangesAsync();
+	}
+}
