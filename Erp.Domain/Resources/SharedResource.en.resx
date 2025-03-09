@@ -86,6 +86,30 @@
   <data name="OrderPlacementError" xml:space="preserve">
     <value>An error occurred while placing the order</value>
   </data>
+  <data name="UnitNameAlreadyExists" xml:space="preserve">
+    <value>This unit name is already in use in your company or is a global unit</value>
+  </data>
+  <data name="UnitShortCodeAlreadyExists" xml:space="preserve">
+    <value>This unit short code is already in use in your company or is a global unit</value>
+  </data>
+  <data name="UnitNotFound" xml:space="preserve">
+    <value>Unit not found</value>
+  </data>
+  <data name="UnitHasProductRawMaterial" xml:space="preserve">
+    <value>This unit cannot be deleted because it is used in product raw materials</value>
+  </data>
+  <data name="UnitHasChildUnit" xml:space="preserve">
+    <value>This unit cannot be deleted because it is used as a root unit for other units</value>
+  </data>
+  <data name="UnitHasProductFormulation" xml:space="preserve">
+    <value>This unit cannot be deleted because it is used in product formulations</value>
+  </data>
+  <data name="RawMaterialNotFound" xml:space="preserve">
+    <value>Raw material not found</value>
+  </data>
+  <data name="UnitTypeMismatch" xml:space="preserve">
+    <value>Cannot convert between different unit types</value>
+  </data>
   
   <!-- Validation Messages -->
   <data name="RequiredField" xml:space="preserve">
@@ -150,10 +174,33 @@
     <value>Payment amount must be greater than zero</value>
   </data>
   <data name="PaymentMethodRequired" xml:space="preserve">
-    <value>Payment method is required</value>
+    <value>Payment method selection is required</value>
   </data>
   <data name="InvalidPaymentMethod" xml:space="preserve">
     <value>Invalid payment method</value>
+  </data>
+  
+  <!-- Unit Validation Messages -->
+  <data name="UnitNameRequired" xml:space="preserve">
+    <value>Unit name is required</value>
+  </data>
+  <data name="UnitNameMaxLength" xml:space="preserve">
+    <value>Unit name cannot exceed 50 characters</value>
+  </data>
+  <data name="UnitShortCodeRequired" xml:space="preserve">
+    <value>Unit short code is required</value>
+  </data>
+  <data name="UnitShortCodeMaxLength" xml:space="preserve">
+    <value>Unit short code cannot exceed 10 characters</value>
+  </data>
+  <data name="UnitDescriptionMaxLength" xml:space="preserve">
+    <value>Unit description cannot exceed 500 characters</value>
+  </data>
+  <data name="UnitConversionRateGreaterThanZero" xml:space="preserve">
+    <value>Conversion rate must be greater than zero</value>
+  </data>
+  <data name="UnitRootUnitIdRequired" xml:space="preserve">
+    <value>Root unit selection is required</value>
   </data>
   
   <!-- Success Messages -->

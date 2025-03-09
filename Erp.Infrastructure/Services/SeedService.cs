@@ -33,7 +33,7 @@ public class SeedService
 		try
 		{
 			await GenerateUserAsync();
-
+			await GenerateGlobalUnits();
 
 		}
 		catch (Exception ex)
@@ -68,11 +68,76 @@ public class SeedService
 	{
 		if (!await _context.Units.AnyAsync(o=>o.Name == "Gram" && o.IsGlobal && !o.IsDeleted))
 		{
-
+			var unit = new Unit
+			{
+				Name = "Gram",
+				ShortCode = "gr",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Weight
+			};
+			await _context.Units.AddAsync(unit);
 		}
 		if (!await _context.Units.AnyAsync(o => o.Name == "Mililitre" && o.IsGlobal && !o.IsDeleted))
 		{
-
+			var unit = new Unit
+			{
+				Name = "Mililitre",
+				ShortCode = "ml",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Volume
+			};
+			await _context.Units.AddAsync(unit);
 		}
+		if (!await _context.Units.AnyAsync(o => o.Name == "Santimetre" && o.IsGlobal && !o.IsDeleted))
+		{
+			var unit = new Unit
+			{
+				Name = "Santimetre",
+				ShortCode = "cm",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Length
+			};
+			await _context.Units.AddAsync(unit);
+		}
+		if (!await _context.Units.AnyAsync(o => o.Name == "Adet" && o.IsGlobal && !o.IsDeleted))
+		{
+			var unit = new Unit
+			{
+				Name = "Adet",
+				ShortCode = "ad",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Count
+			};
+			await _context.Units.AddAsync(unit);
+		}
+		if (!await _context.Units.AnyAsync(o => o.Name == "Saniye" && o.IsGlobal && !o.IsDeleted))
+		{
+			var unit = new Unit
+			{
+				Name = "Saniye",
+				ShortCode = "sn",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Time
+			};
+			await _context.Units.AddAsync(unit);
+		}
+		if (!await _context.Units.AnyAsync(o => o.Name == "Cm2"))
+		{
+			var unit = new Unit
+			{
+				Name = "Cm2",
+				ShortCode = "cm2",
+				ConversionRate = 1,
+				IsGlobal = true,
+				UnitType = UnitType.Area
+			};
+			await _context.Units.AddAsync(unit);
+		}
+		await _context.SaveChangesAsync();
 	}
 }

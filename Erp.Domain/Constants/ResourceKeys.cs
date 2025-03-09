@@ -29,6 +29,14 @@ namespace Erp.Domain.Constants
             public const string PhoneNumberAlreadyExists = "PhoneNumberAlreadyExists";
             public const string TaxNumberAlreadyExists = "TaxNumberAlreadyExists";
             public const string OrderPlacementError = "OrderPlacementError";
+            public const string UnitNameAlreadyExists = "UnitNameAlreadyExists";
+            public const string UnitShortCodeAlreadyExists = "UnitShortCodeAlreadyExists";
+            public const string UnitNotFound = "UnitNotFound";
+            public const string UnitHasProductRawMaterial = "UnitHasProductRawMaterial";
+            public const string UnitHasChildUnit = "UnitHasChildUnit";
+            public const string UnitHasProductFormulation = "UnitHasProductFormulation";
+            public const string RawMaterialNotFound = "RawMaterialNotFound";
+            public const string UnitTypeMismatch = "UnitTypeMismatch";
         }
 
         // Validation messages
@@ -108,6 +116,15 @@ namespace Erp.Domain.Constants
             
             // Auth validation
             public const string OtpRequired = "OtpRequired";
+            
+            // Unit validation
+            public const string UnitNameRequired = "UnitNameRequired";
+            public const string UnitNameMaxLength = "UnitNameMaxLength";
+            public const string UnitShortCodeRequired = "UnitShortCodeRequired";
+            public const string UnitShortCodeMaxLength = "UnitShortCodeMaxLength";
+            public const string UnitDescriptionMaxLength = "UnitDescriptionMaxLength";
+            public const string UnitConversionRateGreaterThanZero = "UnitConversionRateGreaterThanZero";
+            public const string UnitRootUnitIdRequired = "UnitRootUnitIdRequired";
         }
 
         // Success messages

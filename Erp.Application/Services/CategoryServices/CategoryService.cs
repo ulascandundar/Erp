@@ -234,7 +234,7 @@ public class CategoryService : ICategoryService
         {
             query = query.Where(x => 
                 x.Name.Contains(paginationRequest.Search) || 
-                (x.Description != null && x.Description.Contains(paginationRequest.Search)));
+                (x.Description.Contains(paginationRequest.Search)));
         }
 		if (!string.IsNullOrEmpty(paginationRequest.Query))
 		{

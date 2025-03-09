@@ -35,6 +35,8 @@ public class ErpDbContext : DbContext
 	public DbSet<Discount> Discount { get; set; }
 	public DbSet<Unit> Units { get; set; }
 	public DbSet<RawMaterial> RawMaterials { get; set; }
+	public DbSet<ProductFormula> ProductFormulas { get; set; }
+	public DbSet<ProductFormulaItem> ProductFormulaItems { get; set; }
 
 	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 	{

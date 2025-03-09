@@ -6,6 +6,7 @@ using Erp.Application.Services.LocalizationServices;
 using Erp.Application.Services.NotificationServices;
 using Erp.Application.Services.OrderServices;
 using Erp.Application.Services.ProductServices;
+using Erp.Application.Services.UnitServices;
 using Erp.Application.Services.UserServices;
 using Erp.Application.Validators.CategoryValidator;
 using Erp.Application.Validators.OrderValidator;
@@ -33,6 +34,7 @@ public static class ServiceRegister
 		services.AddScoped<IPlaceOrderService, PlaceOrderService>();
 		services.AddScoped<ISignalRNotificationService, SignalRNotificationService>();
 		services.AddScoped<IOrderReportService, OrderReportService>();
+		services.AddScoped<IUnitService, UnitService>();
 		return services;
 	}
 }

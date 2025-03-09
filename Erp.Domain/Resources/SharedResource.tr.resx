@@ -86,6 +86,30 @@
   <data name="OrderPlacementError" xml:space="preserve">
     <value>Sipariş oluşturulurken bir hata oluştu</value>
   </data>
+  <data name="UnitNameAlreadyExists" xml:space="preserve">
+    <value>Bu birim adı şirketinizde zaten kullanılmaktadır veya global bir birimdir</value>
+  </data>
+  <data name="UnitShortCodeAlreadyExists" xml:space="preserve">
+    <value>Bu birim kısa kodu şirketinizde zaten kullanılmaktadır veya global bir birimdir</value>
+  </data>
+  <data name="UnitNotFound" xml:space="preserve">
+    <value>Birim bulunamadı</value>
+  </data>
+  <data name="UnitHasProductRawMaterial" xml:space="preserve">
+    <value>Bu birim, ürün hammaddelerinde kullanıldığı için silinemez</value>
+  </data>
+  <data name="UnitHasChildUnit" xml:space="preserve">
+    <value>Bu birim, diğer birimlerin ana birimi olarak kullanıldığı için silinemez</value>
+  </data>
+  <data name="UnitHasProductFormulation" xml:space="preserve">
+    <value>Bu birim, ürün formülasyonlarında kullanıldığı için silinemez</value>
+  </data>
+  <data name="RawMaterialNotFound" xml:space="preserve">
+    <value>Hammadde bulunamadı</value>
+  </data>
+  <data name="UnitTypeMismatch" xml:space="preserve">
+    <value>Farklı birim türleri arasında dönüşüm yapılamaz</value>
+  </data>
   
   <!-- Validation Messages -->
   <data name="RequiredField" xml:space="preserve">
@@ -154,6 +178,29 @@
   </data>
   <data name="InvalidPaymentMethod" xml:space="preserve">
     <value>Geçersiz ödeme yöntemi</value>
+  </data>
+  
+  <!-- Unit Validation Messages -->
+  <data name="UnitNameRequired" xml:space="preserve">
+    <value>Birim adı zorunludur</value>
+  </data>
+  <data name="UnitNameMaxLength" xml:space="preserve">
+    <value>Birim adı 50 karakteri geçemez</value>
+  </data>
+  <data name="UnitShortCodeRequired" xml:space="preserve">
+    <value>Birim kısa kodu zorunludur</value>
+  </data>
+  <data name="UnitShortCodeMaxLength" xml:space="preserve">
+    <value>Birim kısa kodu 10 karakteri geçemez</value>
+  </data>
+  <data name="UnitDescriptionMaxLength" xml:space="preserve">
+    <value>Birim açıklaması 500 karakteri geçemez</value>
+  </data>
+  <data name="UnitConversionRateGreaterThanZero" xml:space="preserve">
+    <value>Dönüşüm oranı sıfırdan büyük olmalıdır</value>
+  </data>
+  <data name="UnitRootUnitIdRequired" xml:space="preserve">
+    <value>Ana birim seçimi zorunludur</value>
   </data>
   
   <!-- Success Messages -->

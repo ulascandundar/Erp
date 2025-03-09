@@ -15,4 +15,6 @@ public class RawMaterial : BaseEntity
 	public string Barcode { get; set; }
 	public Guid CompanyId { get; set; }
 	public Company Company { get; set; }
+	public Guid UnitId { get; set; }
+	public Unit Unit { get; set; }
 }
