@@ -20,17 +20,20 @@ public class PlaceOrderService : IPlaceOrderService
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
     private readonly ILocalizationService _localizationService;
+    private readonly IUnitService _unitService;
 
     public PlaceOrderService(
         ErpDbContext db,
         IMapper mapper,
         ICurrentUserService currentUserService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IUnitService unitService)
     {
         _db = db;
         _mapper = mapper;
         _currentUserService = currentUserService;
         _localizationService = localizationService;
+        _unitService = unitService;
     }
 
     public async Task<OrderDto> PlaceOrderAsync(PlaceOrderDto placeOrderDto)
@@ -54,6 +57,7 @@ public class PlaceOrderService : IPlaceOrderService
         // Set company and user information
         order.AssignToCompanyAndUser(currentUser.CompanyId.Value, currentUser.Id);
         await _db.Orders.AddAsync(order);
+        await ProccessStockAsync(placeOrderDto, currentUser.CompanyId.Value);
         await _db.SaveChangesAsync();
 
         // Map Order entity to OrderDto
@@ -116,6 +120,27 @@ public class PlaceOrderService : IPlaceOrderService
             throw new BadRequestException(string.Format(
                 "Yetersiz ödeme tutarı. Beklenen: {0}, Gönderilen: {1}",
                 expectedTotalAmount, totalPayments));
+        }
+    }
+
+    private async Task ProccessStockAsync(PlaceOrderDto placeOrderDto, Guid companyId)
+    {
+        var productIds = placeOrderDto.OrderItems.Select(item => item.ProductId).ToList();
+        var products = await _db.Products
+            .Where(p => productIds.Contains(p.Id) && p.CompanyId == companyId && !p.IsDeleted)
+            .Include(p => p.ProductFormula.Items).ThenInclude(p => p.Unit)
+			.Include(p => p.ProductFormula.Items).ThenInclude(p => p.RawMaterial).ToListAsync();
+        var formulas = products.Select(p => p.ProductFormula).ToList();
+        foreach (var formula in formulas)
+        {
+            var formulaItems = formula.Items;
+            foreach (var formulaItem in formulaItems)
+            {
+                var rate = await _unitService.ConvertUnit(formulaItem.UnitId, formulaItem.RawMaterialId);
+                var quantity = formulaItem.Quantity / rate;
+                formulaItem.RawMaterial.Stock -= quantity;
+                _db.RawMaterials.Update(formulaItem.RawMaterial);
+            }
         }
     }
 }

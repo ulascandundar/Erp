@@ -8,11 +8,11 @@ namespace Erp.Domain.Entities;
 
 public class ProductFormulaItem : BaseEntity
 {
-	public decimal Quantity { get; set; }
 	public Guid ProductFormulaId { get; set; }
 	public ProductFormula ProductFormula { get; set; }
 	public Guid RawMaterialId { get; set; }
 	public RawMaterial RawMaterial { get; set; }
+	public decimal Quantity { get; set; }
 	public Guid UnitId { get; set; }
 	public Unit Unit { get; set; }
 }

@@ -116,6 +116,15 @@
   <data name="RawMaterialExistInFormula" xml:space="preserve">
     <value>Bu hammadde, ürün formülasyonlarında kullanıldığı için silinemez</value>
   </data>
+  <data name="ProductFormulaNotFound" xml:space="preserve">
+    <value>Ürün formülü bulunamadı</value>
+  </data>
+  <data name="ProductFormulaNameAlreadyExists" xml:space="preserve">
+    <value>Bu ürün formülü adı şirketinizde zaten kullanılmaktadır</value>
+  </data>
+  <data name="ProductFormulaUsedByProduct" xml:space="preserve">
+    <value>Bu ürün formülü, ürünler tarafından kullanıldığı için silinemez</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Farklı birim türleri arasında dönüşüm yapılamaz</value>
   </data>

@@ -10,6 +10,8 @@ public class ProductFormula : BaseEntity
 {
 	public string Name { get; set; }
 	public string Description { get; set; }
+	public Guid CompanyId { get; set; }
+	public Company Company { get; set; }
 	public List<Product> Products { get; set; }
-	public List<ProductFormulaItem> Items { get; set; }
+	public List<ProductFormulaItem> Items { get; set; } = new List<ProductFormulaItem>();
 }

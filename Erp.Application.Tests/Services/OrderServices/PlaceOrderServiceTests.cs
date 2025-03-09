@@ -27,10 +27,17 @@ namespace Erp.Application.Tests.Services.OrderServices
         private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
         private readonly Mock<ILocalizationService> _localizationServiceMock;
+        private readonly Mock<IUnitService> _unitServiceMock;
         private readonly Guid _companyId = Guid.NewGuid();
         private readonly Guid _userId = Guid.NewGuid();
         private readonly Guid _productId1 = Guid.NewGuid();
         private readonly Guid _productId2 = Guid.NewGuid();
+        private readonly Guid _formulaId1 = Guid.NewGuid();
+        private readonly Guid _formulaId2 = Guid.NewGuid();
+        private readonly Guid _rawMaterialId1 = Guid.NewGuid();
+        private readonly Guid _rawMaterialId2 = Guid.NewGuid();
+        private readonly Guid _unitId1 = Guid.NewGuid();
+        private readonly Guid _unitId2 = Guid.NewGuid();
 
         public PlaceOrderServiceTests()
         {
@@ -63,6 +70,11 @@ namespace Erp.Application.Tests.Services.OrderServices
                 .Returns((string key) => key);
             _localizationServiceMock.Setup(x => x.GetLocalizedString(It.IsAny<string>(), It.IsAny<object[]>()))
                 .Returns((string key, object[] args) => string.Format(key, args));
+                
+            // UnitService mock'u
+            _unitServiceMock = new Mock<IUnitService>();
+            _unitServiceMock.Setup(x => x.ConvertUnit(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(1.0m); // Varsayılan dönüşüm oranı 1.0
         }
 
         private ErpDbContext CreateDbContext()
@@ -73,6 +85,99 @@ namespace Erp.Application.Tests.Services.OrderServices
 
         private async Task SeedTestData(ErpDbContext context)
         {
+            // Test birimleri ekle
+            var units = new List<Unit>
+            {
+                new Unit
+                {
+                    Id = _unitId1,
+                    Name = "Kilogram",
+                    ShortCode = "KG",
+                    ConversionRate = 1,
+                    UnitType = UnitType.Weight,
+                    CompanyId = _companyId,
+                    IsDeleted = false
+                },
+                new Unit
+                {
+                    Id = _unitId2,
+                    Name = "Gram",
+                    ShortCode = "G",
+                    ConversionRate = 0.001m,
+                    UnitType = UnitType.Weight,
+                    CompanyId = _companyId,
+                    IsDeleted = false
+                }
+            };
+            
+            await context.Units.AddRangeAsync(units);
+            
+            // Test hammaddeleri ekle
+            var rawMaterials = new List<RawMaterial>
+            {
+                new RawMaterial
+                {
+                    Id = _rawMaterialId1,
+                    Name = "Test Raw Material 1",
+                    Barcode = "RM-001",
+                    Stock = 100,
+                    UnitId = _unitId1,
+                    CompanyId = _companyId,
+                    IsDeleted = false
+                },
+                new RawMaterial
+                {
+                    Id = _rawMaterialId2,
+                    Name = "Test Raw Material 2",
+                    Barcode = "RM-002",
+                    Stock = 200,
+                    UnitId = _unitId2,
+                    CompanyId = _companyId,
+                    IsDeleted = false
+                }
+            };
+            
+            await context.RawMaterials.AddRangeAsync(rawMaterials);
+            
+            // Test formülleri ekle
+            var formulas = new List<ProductFormula>
+            {
+                new ProductFormula
+                {
+                    Id = _formulaId1,
+                    Name = "Test Formula 1",
+                    CompanyId = _companyId,
+                    IsDeleted = false,
+                    Items = new List<ProductFormulaItem>
+                    {
+                        new ProductFormulaItem
+                        {
+                            RawMaterialId = _rawMaterialId1,
+                            Quantity = 2,
+                            UnitId = _unitId1
+                        }
+                    }
+                },
+                new ProductFormula
+                {
+                    Id = _formulaId2,
+                    Name = "Test Formula 2",
+                    CompanyId = _companyId,
+                    IsDeleted = false,
+                    Items = new List<ProductFormulaItem>
+                    {
+                        new ProductFormulaItem
+                        {
+                            RawMaterialId = _rawMaterialId2,
+                            Quantity = 50,
+                            UnitId = _unitId2
+                        }
+                    }
+                }
+            };
+            
+            await context.ProductFormulas.AddRangeAsync(formulas);
+
             // Test ürünleri ekle
             var products = new List<Product>
             {
@@ -83,6 +188,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                     SKU = "TST-001",
                     Price = 100,
                     CompanyId = _companyId,
+                    ProductFormulaId = _formulaId1,
                     IsDeleted = false
                 },
                 new Product
@@ -92,6 +198,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                     SKU = "TST-002",
                     Price = 200,
                     CompanyId = _companyId,
+                    ProductFormulaId = _formulaId2,
                     IsDeleted = false
                 }
             };
@@ -111,7 +218,8 @@ namespace Erp.Application.Tests.Services.OrderServices
                 context, 
                 _mapper, 
                 _currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -169,7 +277,8 @@ namespace Erp.Application.Tests.Services.OrderServices
                 context, 
                 _mapper, 
                 _currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -198,7 +307,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                     }
                 },
                 Description = "Test Order with Wrong Prices",
-                IsSafeOrder = false // Güvenli olmayan sipariş
+                IsSafeOrder = false // Güvensiz sipariş
             };
 
             // Act
@@ -208,9 +317,9 @@ namespace Erp.Application.Tests.Services.OrderServices
             Assert.NotNull(result);
             Assert.Equal(_companyId, result.CompanyId);
             Assert.Equal(_userId, result.UserId);
-            Assert.Equal(250, result.TotalAmount); // Yanlış toplam
+            Assert.Equal(300, result.TotalAmount); // 150 + 150
             Assert.Equal(0, result.DiscountAmount);
-            Assert.Equal(250, result.NetAmount); // Yanlış net tutar
+            Assert.Equal(300, result.NetAmount);
             Assert.Equal(3, result.TotalQuantity); // 2 + 1
             Assert.Equal(2, result.OrderItems.Count);
             Assert.Equal(1, result.OrderPayments.Count);
@@ -227,7 +336,8 @@ namespace Erp.Application.Tests.Services.OrderServices
                 context, 
                 _mapper, 
                 _currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -238,13 +348,19 @@ namespace Erp.Application.Tests.Services.OrderServices
                         ProductId = _productId1,
                         Quantity = 2,
                         TotalAmount = 150, // Yanlış fiyat (doğrusu 200 olmalı)
+                    },
+                    new PlaceOrderItemDto
+                    {
+                        ProductId = _productId2,
+                        Quantity = 1,
+                        TotalAmount = 200, // Doğru fiyat
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
                 {
                     new PlaceOrderPaymentDto
                     {
-                        Amount = 150,
+                        Amount = 350, // 150 + 200
                         PaymentMethod = PaymentMethods.Cash,
                         Description = "Cash payment"
                     }
@@ -254,10 +370,8 @@ namespace Erp.Application.Tests.Services.OrderServices
             };
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => 
-                placeOrderService.PlaceOrderAsync(placeOrderDto));
-            
-            Assert.Contains("Ürün fiyatı uyuşmazlığı", exception.Message);
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => placeOrderService.PlaceOrderAsync(placeOrderDto));
+            Assert.Contains("Product price mismatch", exception.Message);
         }
 
         [Fact]
@@ -271,7 +385,8 @@ namespace Erp.Application.Tests.Services.OrderServices
                 context, 
                 _mapper, 
                 _currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -294,7 +409,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                 {
                     new PlaceOrderPaymentDto
                     {
-                        Amount = 300, // Yetersiz ödeme (doğrusu 400 olmalı)
+                        Amount = 350, // Yetersiz ödeme (doğrusu 400 olmalı)
                         PaymentMethod = PaymentMethods.Cash,
                         Description = "Cash payment"
                     }
@@ -304,10 +419,8 @@ namespace Erp.Application.Tests.Services.OrderServices
             };
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<BadRequestException>(() => 
-                placeOrderService.PlaceOrderAsync(placeOrderDto));
-            
-            Assert.Contains("Yetersiz ödeme tutarı", exception.Message);
+            var exception = await Assert.ThrowsAsync<BadRequestException>(() => placeOrderService.PlaceOrderAsync(placeOrderDto));
+            Assert.Contains("Total payment amount does not match", exception.Message);
         }
 
         [Fact]
@@ -315,20 +428,23 @@ namespace Erp.Application.Tests.Services.OrderServices
         {
             // Arrange
             using var context = CreateDbContext();
-            
-            // CompanyId olmayan bir kullanıcı oluştur
-            var currentUserServiceMock = new Mock<ICurrentUserService>();
-            currentUserServiceMock.Setup(x => x.GetCurrentUser()).Returns(new UserDto
+            await SeedTestData(context);
+
+            // Şirketi olmayan kullanıcı
+            var currentUserWithoutCompany = new UserDto
             {
                 Id = _userId,
-                CompanyId = null // CompanyId yok
-            });
+                CompanyId = null
+            };
+            var currentUserServiceMock = new Mock<ICurrentUserService>();
+            currentUserServiceMock.Setup(x => x.GetCurrentUser()).Returns(currentUserWithoutCompany);
 
             var placeOrderService = new PlaceOrderService(
                 context, 
                 _mapper, 
                 currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -338,7 +454,7 @@ namespace Erp.Application.Tests.Services.OrderServices
                     {
                         ProductId = _productId1,
                         Quantity = 1,
-                        TotalAmount = 100
+                        TotalAmount = 100,
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
@@ -350,12 +466,13 @@ namespace Erp.Application.Tests.Services.OrderServices
                         Description = "Cash payment"
                     }
                 },
-                Description = "Test Order"
+                Description = "Test Order without Company",
+                IsSafeOrder = true
             };
 
             // Act & Assert
-            await Assert.ThrowsAsync<NullValueException>(() => 
-                placeOrderService.PlaceOrderAsync(placeOrderDto));
+            var exception = await Assert.ThrowsAsync<NullValueException>(() => placeOrderService.PlaceOrderAsync(placeOrderDto));
+            Assert.Equal(ResourceKeys.Errors.UserNotBelongToCompany, exception.Message);
         }
 
         [Fact]
@@ -369,7 +486,8 @@ namespace Erp.Application.Tests.Services.OrderServices
                 context, 
                 _mapper, 
                 _currentUserServiceMock.Object, 
-                _localizationServiceMock.Object);
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
 
             var placeOrderDto = new PlaceOrderDto
             {
@@ -379,26 +497,26 @@ namespace Erp.Application.Tests.Services.OrderServices
                     {
                         ProductId = _productId1,
                         Quantity = 2,
-                        TotalAmount = 180, // 200 - 20 indirim
+                        TotalAmount = 200, // 2 * 100
                     },
                     new PlaceOrderItemDto
                     {
                         ProductId = _productId2,
                         Quantity = 1,
-                        TotalAmount = 180, // 200 - 20 indirim
+                        TotalAmount = 200, // 1 * 200
                     }
                 },
                 Payments = new List<PlaceOrderPaymentDto>
                 {
                     new PlaceOrderPaymentDto
                     {
-                        Amount = 320, // 360 - 40 indirim
+                        Amount = 320, // 400 - 80 (indirim)
                         PaymentMethod = PaymentMethods.Cash,
                         Description = "Cash payment"
                     },
                     new PlaceOrderPaymentDto
                     {
-                        Amount = 40,
+                        Amount = 80,
                         PaymentMethod = PaymentMethods.Discount,
                         Description = "Discount"
                     }
@@ -412,10 +530,91 @@ namespace Erp.Application.Tests.Services.OrderServices
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(360, result.TotalAmount); // 320 + 40
-            Assert.Equal(40, result.DiscountAmount);
-            Assert.Equal(320, result.NetAmount); // 360 - 40
+            Assert.Equal(_companyId, result.CompanyId);
+            Assert.Equal(_userId, result.UserId);
+            Assert.Equal(400, result.TotalAmount);
+            Assert.Equal(80, result.DiscountAmount);
+            Assert.Equal(320, result.NetAmount); // 400 - 80
             Assert.Equal(3, result.TotalQuantity); // 2 + 1
+            Assert.Equal(2, result.OrderItems.Count);
+            Assert.Equal(2, result.OrderPayments.Count);
+        }
+
+        [Fact]
+        public async Task PlaceOrderAsync_WithFormula_ReducesRawMaterialStock()
+        {
+            // Arrange
+            using var context = CreateDbContext();
+            await SeedTestData(context);
+
+            // UnitService mock'unu ayarla
+            _unitServiceMock.Setup(x => x.ConvertUnit(_unitId1, _rawMaterialId1)).ReturnsAsync(1.0m);
+            _unitServiceMock.Setup(x => x.ConvertUnit(_unitId2, _rawMaterialId2)).ReturnsAsync(0.001m);
+
+            var placeOrderService = new PlaceOrderService(
+                context, 
+                _mapper, 
+                _currentUserServiceMock.Object, 
+                _localizationServiceMock.Object,
+                _unitServiceMock.Object);
+
+            var placeOrderDto = new PlaceOrderDto
+            {
+                OrderItems = new List<PlaceOrderItemDto>
+                {
+                    new PlaceOrderItemDto
+                    {
+                        ProductId = _productId1,
+                        Quantity = 2,
+                        TotalAmount = 200, // 2 * 100
+                    },
+                    new PlaceOrderItemDto
+                    {
+                        ProductId = _productId2,
+                        Quantity = 3,
+                        TotalAmount = 600, // 3 * 200
+                    }
+                },
+                Payments = new List<PlaceOrderPaymentDto>
+                {
+                    new PlaceOrderPaymentDto
+                    {
+                        Amount = 800, // 200 + 600
+                        PaymentMethod = PaymentMethods.Cash,
+                        Description = "Cash payment"
+                    }
+                },
+                Description = "Test Order with Formula",
+                IsSafeOrder = true
+            };
+
+            // İlk stok miktarlarını kaydet
+            var initialRawMaterial1 = await context.RawMaterials.FindAsync(_rawMaterialId1);
+            var initialRawMaterial2 = await context.RawMaterials.FindAsync(_rawMaterialId2);
+            var initialStock1 = initialRawMaterial1.Stock;
+            var initialStock2 = initialRawMaterial2.Stock;
+
+            // Act
+            var result = await placeOrderService.PlaceOrderAsync(placeOrderDto);
+
+            // Assert
+            // Sipariş başarıyla oluşturuldu mu kontrol et
+            Assert.NotNull(result);
+            Assert.Equal(_companyId, result.CompanyId);
+            Assert.Equal(_userId, result.UserId);
+            Assert.Equal(800, result.TotalAmount);
+
+            // Hammadde stokları azaldı mı kontrol et
+            var updatedRawMaterial1 = await context.RawMaterials.FindAsync(_rawMaterialId1);
+            var updatedRawMaterial2 = await context.RawMaterials.FindAsync(_rawMaterialId2);
+            
+            // Ürün 1: 2 adet sipariş edildi, her biri 2 birim hammadde kullanıyor, toplam 4 birim azalmalı
+            // Dönüşüm oranı 1.0 olduğu için 4 birim azalır
+            Assert.Equal(initialStock1 - 4, updatedRawMaterial1.Stock);
+            
+            // Ürün 2: 3 adet sipariş edildi, her biri 50 birim hammadde kullanıyor, toplam 150 birim azalmalı
+            // Dönüşüm oranı 0.001 olduğu için 150 * 0.001 = 0.15 birim azalır
+            Assert.Equal(initialStock2 - 150, updatedRawMaterial2.Stock);
         }
     }
 } 

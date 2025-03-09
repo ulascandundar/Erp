@@ -15,5 +15,6 @@ public class ProductDto
     public Guid CompanyId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+	public Guid? ProductFormulaId { get; set; }
+	public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
 } 

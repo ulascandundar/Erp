@@ -116,6 +116,15 @@
   <data name="RawMaterialExistInFormula" xml:space="preserve">
     <value>This raw material cannot be deleted because it is used in product formulations</value>
   </data>
+  <data name="ProductFormulaNotFound" xml:space="preserve">
+    <value>Product formula not found</value>
+  </data>
+  <data name="ProductFormulaNameAlreadyExists" xml:space="preserve">
+    <value>This product formula name is already in use in your company</value>
+  </data>
+  <data name="ProductFormulaUsedByProduct" xml:space="preserve">
+    <value>This product formula cannot be deleted because it is used by products</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Cannot convert between different unit types</value>
   </data>

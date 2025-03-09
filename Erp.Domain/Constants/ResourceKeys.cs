@@ -40,6 +40,9 @@ namespace Erp.Domain.Constants
             public const string RawMaterialNameAlreadyExists = "RawMaterialNameAlreadyExists";
             public const string RawMaterialBarcodeAlreadyExists = "RawMaterialBarcodeAlreadyExists";
             public const string RawMaterialExistInFormula = "RawMaterialExistInFormula";
+            public const string ProductFormulaNotFound = "ProductFormulaNotFound";
+            public const string ProductFormulaNameAlreadyExists = "ProductFormulaNameAlreadyExists";
+            public const string ProductFormulaUsedByProduct = "ProductFormulaUsedByProduct";
         }
 
         // Validation messages

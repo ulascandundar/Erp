@@ -11,4 +11,5 @@ public class ProductCreateDto
     public decimal Price { get; set; }
     public string Barcode { get; set; }
 	public List<Guid> CategoryIds { get; set; }
+	public Guid? ProductFormulaId { get; set; }
 } 

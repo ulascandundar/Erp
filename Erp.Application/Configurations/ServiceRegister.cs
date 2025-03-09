@@ -5,6 +5,7 @@ using Erp.Application.Services.CompanyServices;
 using Erp.Application.Services.LocalizationServices;
 using Erp.Application.Services.NotificationServices;
 using Erp.Application.Services.OrderServices;
+using Erp.Application.Services.ProductFormulaServices;
 using Erp.Application.Services.ProductServices;
 using Erp.Application.Services.RawMaterialServices;
 using Erp.Application.Services.UnitServices;
@@ -38,6 +39,7 @@ public static class ServiceRegister
 		services.AddScoped<IOrderReportService, OrderReportService>();
 		services.AddScoped<IUnitService, UnitService>();
 		services.AddScoped<IRawMaterialService, RawMaterialService>();
+		services.AddScoped<IProductFormulaService, ProductFormulaService>();
 		return services;
 	}
 }
