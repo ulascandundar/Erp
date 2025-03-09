@@ -63,6 +63,8 @@ public class UnitService : IUnitService
 		unit.CompanyId = currentUser.CompanyId;
 		var rootUnit = await _db.Units.FirstOrDefaultAsync(x => x.Id == unitCreateDto.RootUnitId);
 		unit.UnitType = rootUnit.UnitType;
+		var rootUnitRate = await FindRateToRootAsync(rootUnit.Id);
+		unit.RateToRoot = rootUnitRate * unit.ConversionRate;
 		await _db.Units.AddAsync(unit);
 		await _db.SaveChangesAsync();
 		var dto = _mapper.Map<UnitDto>(unit);
@@ -102,6 +104,8 @@ public class UnitService : IUnitService
 		var result = _mapper.Map(unitUpdateDto, unit);
 		var rootUnit = await _db.Units.FirstOrDefaultAsync(x => x.Id == unitUpdateDto.RootUnitId);
 		result.UnitType = rootUnit.UnitType;
+		var rootUnitRate = await FindRateToRootAsync(rootUnit.Id);
+		unit.RateToRoot = rootUnitRate * unit.ConversionRate;
 		_db.Units.Update(result);
 		await _db.SaveChangesAsync();
 		var dto = _mapper.Map<UnitDto>(result);
@@ -239,14 +243,14 @@ public class UnitService : IUnitService
 		}
 		
 		// Calculate conversion rates to root unit for both source and target
-		var sourceToRootRate = await FindRateToRootAsync(sourceUnit.Id);
-		var targetToRootRate = await FindRateToRootAsync(targetUnit.Id);
+		//var sourceToRootRate = await FindRateToRootAsync(sourceUnit.Id);
+		//var targetToRootRate = await FindRateToRootAsync(targetUnit.Id);
 		
 		// Calculate the conversion rate from source to target
 		// If source is 5 times bigger than root, and target is 2 times bigger than root
 		// Then source is 5/2 = 2.5 times bigger than target
-		rate = sourceToRootRate / targetToRootRate;
-		
+		rate = Math.Round(sourceUnit.RateToRoot / targetUnit.RateToRoot , 3);
+
 		return rate;
 	}
 }

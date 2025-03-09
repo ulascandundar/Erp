@@ -18,4 +18,5 @@ public class UnitDto
 	public Guid? CompanyId { get; set; }
 	public bool IsGlobal { get; set; }
 	public UnitType UnitType { get; set; }
+	public decimal RateToRoot { get; set; }
 }

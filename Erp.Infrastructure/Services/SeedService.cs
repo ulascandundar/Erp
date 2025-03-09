@@ -74,7 +74,8 @@ public class SeedService
 				ShortCode = "gr",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Weight
+				UnitType = UnitType.Weight,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}
@@ -86,7 +87,8 @@ public class SeedService
 				ShortCode = "ml",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Volume
+				UnitType = UnitType.Volume,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}
@@ -98,7 +100,8 @@ public class SeedService
 				ShortCode = "cm",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Length
+				UnitType = UnitType.Length,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}
@@ -110,7 +113,8 @@ public class SeedService
 				ShortCode = "ad",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Count
+				UnitType = UnitType.Count,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}
@@ -122,7 +126,8 @@ public class SeedService
 				ShortCode = "sn",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Time
+				UnitType = UnitType.Time,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}
@@ -134,7 +139,8 @@ public class SeedService
 				ShortCode = "cm2",
 				ConversionRate = 1,
 				IsGlobal = true,
-				UnitType = UnitType.Area
+				UnitType = UnitType.Area,
+				RateToRoot = 1
 			};
 			await _context.Units.AddAsync(unit);
 		}

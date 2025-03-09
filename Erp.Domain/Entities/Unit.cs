@@ -18,5 +18,6 @@ public class Unit : BaseEntity
 	public Guid? CompanyId { get; set; }
 	public Company Company { get; set; }
 	public bool IsGlobal { get; set; }
+	public decimal RateToRoot { get; set; }
 	public UnitType UnitType { get; set; }
 }
