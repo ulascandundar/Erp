@@ -125,6 +125,36 @@
   <data name="ProductFormulaUsedByProduct" xml:space="preserve">
     <value>Bu ürün formülü, ürünler tarafından kullanıldığı için silinemez</value>
   </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>Tedarikçi bulunamadı</value>
+  </data>
+  <data name="SupplierNameAlreadyExists" xml:space="preserve">
+    <value>Bu isimde bir tedarikçi zaten mevcut</value>
+  </data>
+  <data name="SupplierTaxNumberAlreadyExists" xml:space="preserve">
+    <value>Bu vergi numarasına sahip bir tedarikçi zaten mevcut</value>
+  </data>
+  <data name="SupplierHasRawMaterials" xml:space="preserve">
+    <value>İlişkili hammaddeleri olan tedarikçi silinemez</value>
+  </data>
+  <data name="RawMaterialNotAssociatedWithSupplier" xml:space="preserve">
+    <value>Hammadde bu tedarikçi ile ilişkilendirilmemiş</value>
+  </data>
+  <data name="RawMaterialAlreadyAssociatedWithSupplier" xml:space="preserve">
+    <value>Bu hammadde zaten bu tedarikçi ile ilişkilendirilmiş</value>
+  </data>
+  <data name="SupplierDeleted" xml:space="preserve">
+    <value>Tedarikçi başarıyla silindi</value>
+  </data>
+  <data name="RawMaterialAddedToSupplier" xml:space="preserve">
+    <value>Hammadde tedarikçiye başarıyla eklendi</value>
+  </data>
+  <data name="RawMaterialRemovedFromSupplier" xml:space="preserve">
+    <value>Hammadde tedarikçiden başarıyla kaldırıldı</value>
+  </data>
+  <data name="RawMaterialPriceUpdated" xml:space="preserve">
+    <value>Hammadde fiyatı başarıyla güncellendi</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Farklı birim türleri arasında dönüşüm yapılamaz</value>
   </data>

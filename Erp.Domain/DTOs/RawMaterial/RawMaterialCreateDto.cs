@@ -14,4 +14,5 @@ public class RawMaterialCreateDto
 	public string Barcode { get; set; }
 	public decimal Stock { get; set; }
 	public Guid UnitId { get; set; }
+	public List<Guid> SupplierIds { get; set; } = new List<Guid>();
 }

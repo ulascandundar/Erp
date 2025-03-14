@@ -9,7 +9,7 @@ namespace Erp.Domain.CustomExceptions;
 
 public class BadRequestException : NonLoggableException
 {
-    public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
+    public override HttpStatusCode StatusCode => HttpStatusCode.OK;
 
     public BadRequestException(string message) : base(message) { }
 } 

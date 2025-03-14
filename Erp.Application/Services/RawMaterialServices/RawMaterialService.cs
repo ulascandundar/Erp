@@ -21,7 +21,13 @@ public class RawMaterialService : IRawMaterialService
 	private readonly ILocalizationService _localizationService;
 	private readonly IMapper _mapper;
 	private readonly IUnitService _unitService;
-	public RawMaterialService(ErpDbContext context, ILocalizationService localizationService, ICurrentUserService currentUserService, IMapper mapper, IUnitService unitService)
+	
+	public RawMaterialService(
+		ErpDbContext context, 
+		ILocalizationService localizationService, 
+		ICurrentUserService currentUserService, 
+		IMapper mapper, 
+		IUnitService unitService)
 	{
 		_db = context;
 		_localizationService = localizationService;
@@ -29,6 +35,7 @@ public class RawMaterialService : IRawMaterialService
 		_mapper = mapper;
 		_unitService = unitService;
 	}
+
 	public async Task<RawMaterialDto> CreateRawMaterialAsync(RawMaterialCreateDto rawMaterialCreateDto)
 	{
 		var currentUser = _currentUserService.GetCurrentUser();
@@ -57,6 +64,46 @@ public class RawMaterialService : IRawMaterialService
 		rawMaterial.CompanyId = currentUser.CompanyId.Value;
 		await _db.RawMaterials.AddAsync(rawMaterial);
 		await _db.SaveChangesAsync();
+		
+		// Add raw material to multiple suppliers if specified
+		if (rawMaterialCreateDto.SupplierIds != null && rawMaterialCreateDto.SupplierIds.Any())
+		{
+			foreach (var supplierId in rawMaterialCreateDto.SupplierIds)
+			{
+				// Check if supplier exists
+				var supplier = await _db.Suppliers
+					.FirstOrDefaultAsync(s => s.Id == supplierId && s.CompanyId == currentUser.CompanyId && !s.IsDeleted);
+					
+				if (supplier == null)
+				{
+					continue; // Skip if supplier doesn't exist
+				}
+				
+				// Check if association already exists
+				var existingAssociation = await _db.RawMaterialSuppliers
+					.FirstOrDefaultAsync(rms => rms.SupplierId == supplierId && 
+											   rms.RawMaterialId == rawMaterial.Id && 
+											   !rms.IsDeleted);
+											   
+				if (existingAssociation != null)
+				{
+					continue; // Skip if association already exists
+				}
+				
+				// Create new association
+				var rawMaterialSupplier = new RawMaterialSupplier
+				{
+					SupplierId = supplierId,
+					RawMaterialId = rawMaterial.Id,
+					Price = rawMaterial.Price // Use raw material price as default
+				};
+				
+				await _db.RawMaterialSuppliers.AddAsync(rawMaterialSupplier);
+			}
+			
+			await _db.SaveChangesAsync();
+		}
+		
 		return _mapper.Map<RawMaterialDto>(rawMaterial);
 	}
 
@@ -94,6 +141,46 @@ public class RawMaterialService : IRawMaterialService
 		rawMaterial.Stock = Math.Round(rawMaterial.Stock * newRate, 3);
 		rawMaterial.UnitId = rawMaterialUpdateDto.UnitId;
 		await _db.SaveChangesAsync();
+		
+		// Handle supplier associations if specified
+		if (rawMaterialUpdateDto.SupplierIds != null && rawMaterialUpdateDto.SupplierIds.Any())
+		{
+			// Get current supplier associations
+			var currentSupplierRawMaterials = await _db.RawMaterialSuppliers
+				.Where(x => x.RawMaterialId == id && !x.IsDeleted)
+				.ToListAsync();
+			
+			var currentSupplierIds = currentSupplierRawMaterials.Select(x => x.SupplierId).ToList();
+			
+			// Add new associations
+			foreach (var supplierId in rawMaterialUpdateDto.SupplierIds)
+			{
+				if (!currentSupplierIds.Contains(supplierId))
+				{
+					// Check if supplier exists
+					var supplier = await _db.Suppliers
+						.FirstOrDefaultAsync(s => s.Id == supplierId && s.CompanyId == currentUser.CompanyId && !s.IsDeleted);
+						
+					if (supplier == null)
+					{
+						continue; // Skip if supplier doesn't exist
+					}
+					
+					// Create new association
+					var rawMaterialSupplier = new RawMaterialSupplier
+					{
+						SupplierId = supplierId,
+						RawMaterialId = id,
+						Price = rawMaterial.Price // Use raw material price as default
+					};
+					
+					await _db.RawMaterialSuppliers.AddAsync(rawMaterialSupplier);
+				}
+			}
+			
+			await _db.SaveChangesAsync();
+		}
+		
 		return _mapper.Map<RawMaterialDto>(rawMaterial);
 	}
 

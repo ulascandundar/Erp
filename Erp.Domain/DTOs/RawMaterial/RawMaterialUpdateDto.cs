@@ -13,4 +13,5 @@ public class RawMaterialUpdateDto
 	public decimal Price { get; set; }
 	public string Barcode { get; set; }
 	public Guid UnitId { get; set; }
+	public List<Guid> SupplierIds { get; set; } = new List<Guid>();
 }

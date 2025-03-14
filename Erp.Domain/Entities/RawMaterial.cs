@@ -17,4 +17,5 @@ public class RawMaterial : BaseEntity
 	public Company Company { get; set; }
 	public Guid UnitId { get; set; }
 	public Unit Unit { get; set; }
+    public List<RawMaterialSupplier> RawMaterialSuppliers { get; set; } = new List<RawMaterialSupplier>();
 }

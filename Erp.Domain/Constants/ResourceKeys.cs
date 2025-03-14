@@ -43,6 +43,12 @@ namespace Erp.Domain.Constants
             public const string ProductFormulaNotFound = "ProductFormulaNotFound";
             public const string ProductFormulaNameAlreadyExists = "ProductFormulaNameAlreadyExists";
             public const string ProductFormulaUsedByProduct = "ProductFormulaUsedByProduct";
+            public const string SupplierNotFound = "SupplierNotFound";
+            public const string SupplierNameAlreadyExists = "SupplierNameAlreadyExists";
+            public const string SupplierTaxNumberAlreadyExists = "SupplierTaxNumberAlreadyExists";
+            public const string SupplierHasRawMaterials = "SupplierHasRawMaterials";
+            public const string RawMaterialNotAssociatedWithSupplier = "RawMaterialNotAssociatedWithSupplier";
+            public const string RawMaterialAlreadyAssociatedWithSupplier = "RawMaterialAlreadyAssociatedWithSupplier";
         }
 
         // Validation messages

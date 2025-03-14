@@ -34,7 +34,9 @@ public class ErpDbContext : DbContext
 	public DbSet<OrderPayment> OrderPayment { get; set; }
 	public DbSet<Discount> Discount { get; set; }
 	public DbSet<Unit> Units { get; set; }
+	public DbSet<Supplier> Suppliers { get; set; }
 	public DbSet<RawMaterial> RawMaterials { get; set; }
+	public DbSet<RawMaterialSupplier> RawMaterialSuppliers { get; set; }
 	public DbSet<ProductFormula> ProductFormulas { get; set; }
 	public DbSet<ProductFormulaItem> ProductFormulaItems { get; set; }
 

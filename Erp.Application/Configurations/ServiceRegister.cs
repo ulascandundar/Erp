@@ -8,6 +8,7 @@ using Erp.Application.Services.OrderServices;
 using Erp.Application.Services.ProductFormulaServices;
 using Erp.Application.Services.ProductServices;
 using Erp.Application.Services.RawMaterialServices;
+using Erp.Application.Services.SupplierServices;
 using Erp.Application.Services.UnitServices;
 using Erp.Application.Services.UserServices;
 using Erp.Application.Validators.CategoryValidator;
@@ -40,6 +41,7 @@ public static class ServiceRegister
 		services.AddScoped<IUnitService, UnitService>();
 		services.AddScoped<IRawMaterialService, RawMaterialService>();
 		services.AddScoped<IProductFormulaService, ProductFormulaService>();
+		services.AddScoped<ISupplierService, SupplierService>();
 		return services;
 	}
 }

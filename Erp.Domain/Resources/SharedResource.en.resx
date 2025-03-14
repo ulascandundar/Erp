@@ -125,6 +125,36 @@
   <data name="ProductFormulaUsedByProduct" xml:space="preserve">
     <value>This product formula cannot be deleted because it is used by products</value>
   </data>
+  <data name="SupplierNotFound" xml:space="preserve">
+    <value>Supplier not found</value>
+  </data>
+  <data name="SupplierNameAlreadyExists" xml:space="preserve">
+    <value>Supplier with this name already exists</value>
+  </data>
+  <data name="SupplierTaxNumberAlreadyExists" xml:space="preserve">
+    <value>Supplier with this tax number already exists</value>
+  </data>
+  <data name="SupplierHasRawMaterials" xml:space="preserve">
+    <value>Cannot delete supplier with associated raw materials</value>
+  </data>
+  <data name="RawMaterialNotAssociatedWithSupplier" xml:space="preserve">
+    <value>Raw material is not associated with this supplier</value>
+  </data>
+  <data name="RawMaterialAlreadyAssociatedWithSupplier" xml:space="preserve">
+    <value>This raw material is already associated with this supplier</value>
+  </data>
+  <data name="SupplierDeleted" xml:space="preserve">
+    <value>Supplier deleted successfully</value>
+  </data>
+  <data name="RawMaterialAddedToSupplier" xml:space="preserve">
+    <value>Raw material added to supplier successfully</value>
+  </data>
+  <data name="RawMaterialRemovedFromSupplier" xml:space="preserve">
+    <value>Raw material removed from supplier successfully</value>
+  </data>
+  <data name="RawMaterialPriceUpdated" xml:space="preserve">
+    <value>Raw material price updated successfully</value>
+  </data>
   <data name="UnitTypeMismatch" xml:space="preserve">
     <value>Cannot convert between different unit types</value>
   </data>
