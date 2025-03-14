@@ -11,6 +11,7 @@ using Erp.Socket.Configurations;
 using Erp.Socket.Hubs;
 using Erp.Application.Services.LocalizationServices;
 using Erp.Domain.Resources;
+using Erp.Domain.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,6 +90,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SetDefaultCulture(supportedCultures[0]) // Turkish is default
         .AddSupportedCultures(supportedCultures)
         .AddSupportedUICultures(supportedCultures);
+        
+    // Add custom header culture provider as the first provider
+    options.RequestCultureProviders.Insert(0, new HeaderRequestCultureProvider
+    {
+        HeaderName = AppConstants.CultureInfoHeaderName
+    });
 });
 
 // Register localization service
