@@ -201,7 +201,7 @@ public class RawMaterialService : IRawMaterialService
 		var query = _db.RawMaterials.Where(x => x.CompanyId == currentUser.CompanyId && !x.IsDeleted);
 		if (!string.IsNullOrEmpty(paginationRequest.Query))
 		{
-			query = query.Where(paginationRequest.Query);
+			query = query.ApplyQueryBuilderFilter(paginationRequest.Query);
 		}
 		if (!string.IsNullOrEmpty(paginationRequest.Search))
 		{

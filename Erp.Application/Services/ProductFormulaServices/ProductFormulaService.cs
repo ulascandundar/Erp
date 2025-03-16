@@ -239,7 +239,7 @@ public class ProductFormulaService : IProductFormulaService
 
         if (!string.IsNullOrEmpty(paginationRequest.Query))
         {
-            query = query.Where(paginationRequest.Query);
+            query = query.ApplyQueryBuilderFilter(paginationRequest.Query);
         }
 
         // Execute pagination

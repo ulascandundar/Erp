@@ -164,7 +164,7 @@ public class UnitService : IUnitService
         }
 		if (!string.IsNullOrEmpty(paginationRequest.Query))
 		{
-			query = query.Where(paginationRequest.Query);
+			query = query.ApplyQueryBuilderFilter(paginationRequest.Query);
 		}
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
 		var dtos = _mapper.Map<List<UnitDto>>(entityResult.Items);

@@ -205,6 +205,11 @@ public class SupplierService : ISupplierService
             query = query.OrderByDescending(x => x.CreatedAt);
         }
 
+        if (!string.IsNullOrEmpty(paginationRequest.Query))
+        {
+            query = query.ApplyQueryBuilderFilter(paginationRequest.Query);
+		}
+
         // Execute pagination
         var entityResult = await query.ToPagedResultAsync(paginationRequest);
         

@@ -238,7 +238,7 @@ public class CategoryService : ICategoryService
         }
 		if (!string.IsNullOrEmpty(paginationRequest.Query))
 		{
-			query = query.Where(paginationRequest.Query);
+			query = query.ApplyQueryBuilderFilter(paginationRequest.Query);
 		}
 		var entityResult = await query.ToPagedResultAsync(paginationRequest);
         var dtos = _mapper.Map<List<CategoryDto>>(entityResult.Items);
