@@ -1,17 +1,8 @@
 ﻿using Erp.Domain.Entities;
-using Erp.Domain.Entities.NoSqlEntities;
 using Erp.Domain.Enums;
+using Erp.Infrastructure.Configurations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Erp.Infrastructure.Data;
 
@@ -71,18 +62,9 @@ public class ErpDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		var options = new JsonSerializerOptions
-		{
-			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-			PropertyNameCaseInsensitive = true,
-			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-		};
-		modelBuilder.Entity<User>()
-			.Property(e => e.Customer)
-		.HasColumnType("jsonb")
-			.HasConversion(
-		v => JsonSerializer.Serialize(v, options),
-				v => JsonSerializer.Deserialize<Customer>(v, options) ?? new Customer());
+		// PostgreSQL jsonb veri tiplerini yapılandır
+		modelBuilder.ConfigureJsonbTypes();
+		
 		base.OnModelCreating(modelBuilder);
 	}
 }

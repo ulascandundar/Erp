@@ -3,6 +3,7 @@ using Erp.Domain.Constants;
 using Erp.Domain.CustomExceptions;
 using Erp.Domain.DTOs.Order;
 using Erp.Domain.Entities;
+using Erp.Domain.Entities.NoSqlEntities;
 using Erp.Domain.Interfaces.BusinessServices;
 using Erp.Infrastructure.Data;
 using FluentValidation;
@@ -57,7 +58,7 @@ public class PlaceOrderService : IPlaceOrderService
         // Set company and user information
         order.AssignToCompanyAndUser(currentUser.CompanyId.Value, currentUser.Id);
         await _db.Orders.AddAsync(order);
-        await ProccessStockAsync(placeOrderDto, currentUser.CompanyId.Value);
+        await ProccessStockAsync(placeOrderDto, order, currentUser.CompanyId.Value);
         await _db.SaveChangesAsync();
 
         // Map Order entity to OrderDto
@@ -123,24 +124,85 @@ public class PlaceOrderService : IPlaceOrderService
         }
     }
 
-    private async Task ProccessStockAsync(PlaceOrderDto placeOrderDto, Guid companyId)
+    private async Task ProccessStockAsync(PlaceOrderDto placeOrderDto, Order order, Guid companyId)
     {
         var productIds = placeOrderDto.OrderItems.Select(item => item.ProductId).ToList();
         var products = await _db.Products
             .Where(p => productIds.Contains(p.Id) && p.CompanyId == companyId && !p.IsDeleted)
             .Include(p => p.ProductFormula.Items).ThenInclude(p => p.Unit)
-			.Include(p => p.ProductFormula.Items).ThenInclude(p => p.RawMaterial).ToListAsync();
-        var formulas = products.Select(p => p.ProductFormula).ToList();
-        foreach (var formula in formulas)
+            .Include(p => p.ProductFormula.Items).ThenInclude(p => p.RawMaterial).ThenInclude(p => p.Unit)
+            .ToListAsync();
+
+        // Ürün ID'lerine göre ürünleri eşleştir
+        var productDict = products.ToDictionary(p => p.Id, p => p);
+
+        foreach (var orderItem in order.OrderItems)
         {
-            var formulaItems = formula.Items;
-            foreach (var formulaItem in formulaItems)
+            if (productDict.TryGetValue(orderItem.ProductId, out var product) && product.ProductFormula != null)
             {
-                var rate = await _unitService.ConvertUnit(formulaItem.UnitId, formulaItem.RawMaterialId);
-                var quantity = formulaItem.Quantity / rate;
-                formulaItem.RawMaterial.Stock -= quantity;
-                _db.RawMaterials.Update(formulaItem.RawMaterial);
+                // Ürün maliyetini hesapla ve hammadde tüketim raporunu oluştur
+                var costResult = await CalculateProductCostAndConsumptionReportAsync(product, orderItem.Quantity);
+                decimal productCost = costResult.ProductCost;
+                List<RawMaterialConsumption> consumptionReport = costResult.ConsumptionReport;
+                
+                // OrderItem'a maliyet ve tüketim raporu bilgilerini ekle
+                orderItem.ProductCost = productCost;
+                orderItem.RawMaterialConsumptionReport = consumptionReport;
+                
+                // Hammadde stoklarını güncelle
+                foreach (var formulaItem in product.ProductFormula.Items)
+                {
+                    var rate = await _unitService.ConvertUnit(formulaItem.UnitId, formulaItem.RawMaterialId);
+                    var consumedQuantity = (formulaItem.Quantity * orderItem.Quantity) / rate;
+                    formulaItem.RawMaterial.Stock -= consumedQuantity;
+                    _db.RawMaterials.Update(formulaItem.RawMaterial);
+                }
             }
         }
+    }
+
+    /// <summary>
+    /// Ürünün maliyetini hesaplar ve hammadde tüketim raporunu oluşturur
+    /// </summary>
+    /// <param name="product">Ürün</param>
+    /// <param name="quantity">Sipariş edilen miktar</param>
+    /// <returns>Ürün maliyeti ve hammadde tüketim raporu</returns>
+    private async Task<(decimal ProductCost, List<RawMaterialConsumption> ConsumptionReport)> CalculateProductCostAndConsumptionReportAsync(Product product, decimal quantity)
+    {
+        decimal totalCost = 0;
+        var consumptionReport = new List<RawMaterialConsumption>();
+
+        if (product.ProductFormula == null || !product.ProductFormula.Items.Any())
+        {
+            return (0, consumptionReport);
+        }
+
+        foreach (var formulaItem in product.ProductFormula.Items)
+        {
+            var rawMaterial = formulaItem.RawMaterial;
+            if (rawMaterial == null) continue;
+
+            // Birim dönüşümü yap
+            var rate = await _unitService.ConvertUnit(formulaItem.UnitId, formulaItem.RawMaterialId);
+            var consumedQuantity = (formulaItem.Quantity * quantity) / rate;
+            
+            // Hammadde maliyetini hesapla
+            var itemCost = rawMaterial.Price * consumedQuantity;
+            totalCost += itemCost;
+
+            // Tüketim raporuna ekle
+            consumptionReport.Add(new RawMaterialConsumption
+            {
+                RawMaterialId = rawMaterial.Id,
+                RawMaterialName = rawMaterial.Name,
+                UnitId = rawMaterial.UnitId,
+                UnitName = rawMaterial.Unit?.Name,
+                ConsumedQuantity = consumedQuantity,
+                UnitPrice = rawMaterial.Price,
+                TotalCost = itemCost
+            });
+        }
+
+        return (totalCost, consumptionReport);
     }
 }

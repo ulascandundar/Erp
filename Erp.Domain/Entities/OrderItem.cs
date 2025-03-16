@@ -1,3 +1,4 @@
+using Erp.Domain.Entities.NoSqlEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,4 +15,6 @@ public class OrderItem : BaseEntity
     public decimal Quantity { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal DiscountAmount { get; set; }
+    public decimal ProductCost { get; set; } // Ürünün o anki maliyeti
+    public List<RawMaterialConsumption> RawMaterialConsumptionReport { get; set; } // Hammadde tüketim raporu (jsonb formatında)
 }
